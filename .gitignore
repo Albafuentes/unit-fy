@@ -1,0 +1,21 @@
+# Dependencies
+node_modules
+dist
+build
+*.tsbuildinfo
+.DS_Store
+
+
+# Storybook
+*storybook.log
+storybook-static
+
+
+# Testing
+.vitest
+coverage
+
+# Environment variables
+.env
+.env.*.local
+
