@@ -1,0 +1,41 @@
+:root {
+	/* ----------------------------------------------------------- */
+	/* Font sizes */
+	--font-size-xs: 0.64rem;
+	--font-size-sm: 0.8rem;
+	--font-size-md: 1rem;
+	--font-size-lg: 1.25rem;
+	--font-size-xl: 1.563rem;
+	--font-size-2xl: 1.953rem;
+	--font-size-3xl: 2.441rem;
+	--font-size-4xl: 3.052rem;
+	--font-size-5xl: 3.815rem;
+
+	/* ----------------------------------------------------------- */
+	/* Font weights */
+	--font-weight-thin: 100;
+	--font-weight-extra-light: 200;
+	--font-weight-light: 300;
+	--font-weight-normal: 400;
+	--font-weight-medium: 500;
+	--font-weight-semibold: 600;
+	--font-weight-bold: 700;
+	--font-weight-extra-bold: 800;
+	--font-weight-black: 900;
+
+	/* ----------------------------------------------------------- */
+	/* Line heights */
+	--line-height-shorter: 1.25;
+	--line-height-short: 1.375;
+	--line-height-moderate: 1.5;
+	--line-height-tall: 1.625;
+	--line-height-taller: 2;
+
+	/* ----------------------------------------------------------- */
+	/* Letter spacing */
+	--letter-spacing-tighter: -0.05em;
+	--letter-spacing-tight: -0.025em;
+	--letter-spacing-wide: 0.025em;
+	--letter-spacing-wider: 0.05em;
+	--letter-spacing-widest: 0.1em;
+}

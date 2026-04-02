@@ -7,15 +7,16 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": [
-			"node_modules",
-			"dist",
-			"build",
-			"*.tsbuildinfo",
-			".DS_Store",
-			".vitest/*",
-			"coverage/*",
-			"storybook-static/"
+		"includes": [
+			"**",
+			"!**/node_modules",
+			"!**/dist",
+			"!**/build",
+			"!**/*.tsbuildinfo",
+			"!**/.DS_Store",
+			"!**/.vitest/**",
+			"!**/coverage/**",
+			"!**/storybook-static/**"
 		]
 	},
 	"formatter": {

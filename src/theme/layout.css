@@ -1,0 +1,55 @@
+:root {
+	/* ----------------------------------------------------------- */
+	/* Border radius */
+	--border-radius-none: 0;
+	--border-radius-2xs: 0.0625rem;
+	--border-radius-xs: 0.125rem;
+	--border-radius-sm: 0.25rem;
+	--border-radius-md: 0.375rem;
+	--border-radius-lg: 0.5rem;
+	--border-radius-xl: 0.75rem;
+	--border-radius-2xl: 1rem;
+	--border-radius-3xl: 1.5rem;
+	--border-radius-4xl: 2rem;
+	--border-radius-full: 9999px;
+
+	/* ----------------------------------------------------------- */
+	/* Aspect ratios */
+	--aspect-ratio-square: 1 / 1;
+	--aspect-ratio-landscape: 4 / 3;
+	--aspect-ratio-portrait: 3 / 4;
+	--aspect-ratio-wide: 16 / 9;
+	--aspect-ratio-ultra-wide: 18 / 5;
+	--aspect-ratio-golden: 1.618 / 1;
+
+	/* ----------------------------------------------------------- */
+	/* Breakpoints */
+	--breakpoint-sm: 480px;
+	--breakpoint-md: 768px;
+	--breakpoint-lg: 1024px;
+	--breakpoint-xl: 1280px;
+	--breakpoint-2xl: 1536px;
+
+	/* ----------------------------------------------------------- */
+	/* Shadows */
+	--shadow-xs:
+		0px 1px 2px color-mix(in srgb, var(--color-gray_900) 10%, transparent),
+		0px 0px 1px color-mix(in srgb, var(--color-gray_900) 20%, transparent);
+	--shadow-sm:
+		0px 2px 4px color-mix(in srgb, var(--color-gray_900) 10%, transparent),
+		0px 0px 1px color-mix(in srgb, var(--color-gray_900) 30%, transparent);
+	--shadow-md:
+		0px 4px 8px color-mix(in srgb, var(--color-gray_900) 10%, transparent),
+		0px 0px 1px color-mix(in srgb, var(--color-gray_900) 30%, transparent);
+	--shadow-lg:
+		0px 8px 16px color-mix(in srgb, var(--color-gray_900) 10%, transparent),
+		0px 0px 1px color-mix(in srgb, var(--color-gray_900) 30%, transparent);
+	--shadow-xl:
+		0px 16px 24px color-mix(in srgb, var(--color-gray_900) 10%, transparent),
+		0px 0px 1px color-mix(in srgb, var(--color-gray_900) 30%, transparent);
+	--shadow-2xl:
+		0px 24px 40px color-mix(in srgb, var(--color-gray_900) 16%, transparent),
+		0px 0px 1px color-mix(in srgb, var(--color-gray_900) 30%, transparent);
+	--shadow-inner: inset 0 2px 4px 0 color-mix(in srgb, black 5%, transparent);
+	--shadow-inset: inset 0 0 0 1px color-mix(in srgb, black 5%, transparent);
+}
