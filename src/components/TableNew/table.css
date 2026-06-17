@@ -25,6 +25,9 @@
 		&.th-divisable {
 			border-right: 1px solid var(--color-gray_200);
 		}
+		&.th-sortable {
+			cursor: pointer;
+		}
 	}
 
 	/* tbody*/

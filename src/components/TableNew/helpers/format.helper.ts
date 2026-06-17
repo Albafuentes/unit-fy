@@ -1,6 +1,6 @@
 import React, { createElement } from "react";
 import {
-  FALLBACK,
+	FALLBACK,
 	formatBoolean,
 	formatByte,
 	formatDate,
@@ -8,7 +8,8 @@ import {
 	formatNumberCurrency,
 	formatNumberPercent,
 } from "../../../helpers/format.helper.js";
-import type { TableTypes } from "../Table.tsx";
+import type { TableTypes } from "../types/table.types.js";
+import { validationValue } from "./validation.helper.js";
 
 /**
  * Converts a cell value to a displayable string.
@@ -46,20 +47,11 @@ export const formatCellToString = (value: unknown): string => {
 
 /**
  * Get renderer function based on Table.CellType
+ * validationValue: Validates the cell value and returns a string or null.
+ * getLocale: Retrieves the user's locale from the browser.
+ * getTimeZone: Retrieves the user's time zone from the browser.
+ * formatDataToCellType: Returns a renderer function based on the specified CellType.
  */
-
-const validationValue = <T extends object>(
-	value: T[keyof T],
-): string | null => {
-	if (
-		value === null ||
-		value === undefined ||
-		(typeof value === "string" && value.length === 0)
-	) {
-		return null;
-	}
-	return String(value);
-};
 
 const getLocale = (): string => {
 	return navigator.language;
@@ -84,12 +76,17 @@ export const formatDataToCellType = <T extends object>(
 					null,
 					formatDate(validationValue<T>(cellData), getLocale(), getTimeZone()),
 				);
-        case "date-time":
+		case "date-time":
 			return (cellData: T[keyof T]) =>
 				createElement(
 					"span",
 					null,
-					formatDate(validationValue<T>(cellData), getLocale(), getTimeZone(), true),
+					formatDate(
+						validationValue<T>(cellData),
+						getLocale(),
+						getTimeZone(),
+						true,
+					),
 				);
 		case "byte":
 			return (cellData: T[keyof T]) =>

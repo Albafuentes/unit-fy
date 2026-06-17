@@ -1,5 +1,5 @@
 import type React from "react";
-import type { TableTypes } from "../Table";
+import type { TableTypes } from "../types/table.types";
 import { formatDataToCellType } from "./format.helper";
 
 export const buildColumns = <T extends object>(
@@ -8,23 +8,23 @@ export const buildColumns = <T extends object>(
 ): TableTypes.Column<T>[] => {
 	if (data.length <= 0)
 		return !config
-			? ([{ headerCell: "", key: "" }] as TableTypes.Column<T>[])
+			? ([{ header: "", accessorKey: "" }] as TableTypes.Column<T>[])
 			: (config
-					.filter((columnConfig) => !columnConfig.hide)
+					.filter((columnConfig) => !columnConfig.isVisible)
 					.map((columnConfig) => ({
-						headerCell: columnConfig.headerCell ?? (columnConfig.key as string),
-						key: columnConfig.key as string,
+						header: columnConfig.header ?? (columnConfig.accessorKey as string),
+						accessorKey: columnConfig.accessorKey as string,
 					})) as TableTypes.Column<T>[]);
 
 	const allDataKeys = Object.keys(data[0]) as (keyof T)[];
 
 	// If config is provided, use it to define columns and add missing ones
 	if (config && config.length > 0) {
-		const configKeys = new Set(config.map((columnConfig) => columnConfig.key));
+		const configKeys = new Set(config.map((columnConfig) => columnConfig.accessorKey));
 
 		// Get columns from config (excluding hidden ones)
 		const configColumns: TableTypes.Column<T>[] = config
-			.filter((columnConfig) => !columnConfig.hide)
+			.filter((columnConfig) => !columnConfig.isVisible)
 			.map((columnConfig) => {
 				// Determine render function: use explicit render if provided, otherwise use renderType
 				let renderFunction:
@@ -35,17 +35,18 @@ export const buildColumns = <T extends object>(
 					  ) => React.JSX.Element)
 					| undefined;
 
-				if (columnConfig.render) {
+				if (columnConfig.cell) {
 					// Explicit render function takes precedence
-					renderFunction = columnConfig.render;
+					renderFunction = columnConfig.cell;
 				} else if (columnConfig.renderType) {
 					// Use renderer based on renderType
 					renderFunction = formatDataToCellType(columnConfig.renderType);
 				}
-
 				const column: TableTypes.Column<T> = {
-					headerCell: columnConfig.headerCell ?? (columnConfig.key as string),
-					key: columnConfig.key,
+					header: columnConfig.header ?? (columnConfig.accessorKey as string),
+					accessorKey: columnConfig.accessorKey,
+					isSortable: columnConfig.isSortable,
+					align: columnConfig.align,
 					...(columnConfig.colSpan !== undefined
 						? { colSpan: columnConfig.colSpan }
 						: {}),
@@ -70,20 +71,18 @@ export const buildColumns = <T extends object>(
 		// Add default columns for keys not in config
 		const defaultColumns: TableTypes.Column<T>[] = missingKeys.map(
 			(key: keyof T) => ({
-				headerCell: key as string,
-				key: key,
+				header: key as string,
+				accessorKey: key,
 			}),
 		);
-
 		// Combine config columns (with their order) and default columns
 		return [...configColumns, ...defaultColumns];
 	}
 
 	// If no config provided, use all keys from data
 	const columns: TableTypes.Column<T>[] = allDataKeys.map((key: keyof T) => ({
-		headerCell: key as string,
-		key: key,
+		header: key as string,
+		accessorKey: key,
 	}));
-
 	return columns;
 };
