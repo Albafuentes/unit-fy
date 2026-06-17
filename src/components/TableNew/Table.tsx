@@ -42,44 +42,34 @@ const Table = <T extends Record<string, any>>({
 					scope: "col",
 					colSpan: column.colSpan || undefined,
 					id: crypto.randomUUID(),
-					className: column.divideY ? "th-divisable" : "",
+					className: column.divideY
+						? "th-divisable"
+						: column.isSortable
+							? "th-sortable"
+							: "",
 				},
-				column.isSortable
-					? React.createElement(
-							"div",
-							{
-								display: "flex",
-								alignItems: "center",
-								gap: 2,
-							},
-							column.header,
-							sortState.direction === SortDirectionEnum.Desc ? (
-								<ArrowUpAZ
-									className="th-sortable"
-									data-testid="arrow-up"
-									onClick={() => {
-										sortState.action(
-											SortDirectionEnum.Asc,
-											column.accessorKey,
-											dataTable,
-										);
-									}}
-								/>
-							) : (
-								<ArrowDownAZ
-									className="th-sortable"
-									data-testid="arrow-down"
-									onClick={() => {
-										sortState.action(
-											SortDirectionEnum.Desc,
-											column.accessorKey,
-											dataTable,
-										);
-									}}
-								/>
-							),
-						)
-					: column.header,
+				column.header,
+				column.isSortable ? (
+					<button
+						type="button"
+						className="th-sortable-button"
+						onClick={() => {
+							sortState.action(
+								sortState.direction === SortDirectionEnum.Desc
+									? SortDirectionEnum.Asc
+									: SortDirectionEnum.Desc,
+								column.accessorKey,
+								dataTable,
+							);
+						}}
+					>
+						{sortState.direction === SortDirectionEnum.Desc ? (
+							<ArrowUpAZ data-testid="arrow-up" />
+						) : (
+							<ArrowDownAZ data-testid="arrow-down" />
+						)}
+					</button>
+				) : null,
 			);
 		});
 	}, [parseColumns, sortState, dataTable]);
