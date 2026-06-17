@@ -1,6 +1,7 @@
 /*
  * validationValue: Validates the cell value and returns a string or null.
  */
+//TODO: Is a value helper
 export const validationValue = <T extends object>(
 	value: T[keyof T],
 ): string | null => {
@@ -12,12 +13,5 @@ export const validationValue = <T extends object>(
 		return null;
 	}
 	return String(value);
-};
-
-/*
-* isAValidDate: Checks if a string is a valid date.
-*/
-export const isAValidDate = (value: string): boolean => {
-    return !Number.isNaN(Date.parse(value));
 };
 
