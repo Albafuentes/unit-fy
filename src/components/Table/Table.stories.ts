@@ -26,49 +26,49 @@ type Story = StoryObj<typeof meta>;
 export const Primary: Story = {
 	args: {
 		config: [
-			{ key: "rawString" },
-			{ key: "rawNumber" },
-			{ key: "rawEmpty", headerCell: "Vacío → -" },
-			{ key: "rawNull", headerCell: "Null → -" },
-			{ key: "rawObject" },
-			{ key: "rawArray" },
-			{ key: "colDate", headerCell: "date", renderType: "date" as const },
-			{ key: "colByte", headerCell: "byte", renderType: "byte" as const },
+			{ accessorKey: "rawString", isSortable: true },
+			{ accessorKey: "rawNumber" },
+			{ accessorKey: "rawEmpty", header: "Vacío → -" },
+			{ accessorKey: "rawNull", header: "Null → -" },
+			{ accessorKey: "rawObject" },
+			{ accessorKey: "rawArray" },
+			{ accessorKey: "colDate", header: "date", renderType: "date" as const },
+			{ accessorKey: "colByte", header: "byte", renderType: "byte" as const },
 			{
-				key: "colBoolean",
-				headerCell: "boolean",
+				accessorKey: "colBoolean",
+				header: "boolean",
 				renderType: "boolean" as const,
 			},
-			{ key: "colNumber", headerCell: "number", renderType: "number" as const },
+			{ accessorKey: "colNumber", header: "number", renderType: "number" as const },
 			{
-				key: "colPercent",
-				headerCell: "%",
+				accessorKey: "colPercent",
+				header: "%",
 				renderType: "number-percent" as const,
 			},
 			{
-				key: "colCurrency",
-				headerCell: "$",
+				accessorKey: "colCurrency",
+				header: "$",
 				renderType: "number-currency" as const,
 			},
 			{
-				key: "colDateTime",
-				headerCell: "date-time",
+				accessorKey: "colDateTime",
+				header: "date-time",
 				renderType: "date-time" as const,
 			},
 			{
-				key: "colBadge",
-				headerCell: "badge",
+				accessorKey: "colBadge",
+				header: "badge",
 				renderType: "badge" as const,
 			},
 			{
-				key: "colCustom",
-				headerCell: "Custom",
-				render: (value) => React.createElement("strong", null, String(value)),
+				accessorKey: "colCustom",
+				header: "Custom",
+				cell: (value) => React.createElement("strong", null, String(value)),
 			},
 		],
 		data: [
 			{
-				rawString: "Texto plano",
+				rawString: crypto.randomUUID(),
 				rawNumber: 3.14159,
 				rawEmpty: "",
 				rawNull: null,
@@ -86,7 +86,7 @@ export const Primary: Story = {
 				colCustom: "Cualquier cosa",
 			},
 			{
-				rawString: "Texto plano",
+				rawString: crypto.randomUUID(),
 				rawNumber: 3.14159,
 				rawEmpty: "",
 				rawNull: null,
@@ -110,8 +110,8 @@ export const Primary: Story = {
 export const Empty: Story = {
 	args: {
 		config: [
-			{ key: "id", headerCell: "ID" },
-			{ key: "name", headerCell: "Name" },
+			{ accessorKey: "id", header: "ID" },
+			{ accessorKey: "name", header: "Name" },
 		],
 		data: [],
 	},
