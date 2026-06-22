@@ -1,6 +1,5 @@
 import "./table.css";
-import type React from "react";
-import { isValidElement } from "react";
+import React, { isValidElement, type JSX } from "react";
 import { Filter, Pagination, Table } from "./components";
 import {
 	type FilterState,
@@ -19,7 +18,7 @@ export interface TableProviderProps<T extends object> {
 		_rowIndex: number,
 	) => React.HTMLAttributes<HTMLTableRowElement>; // apply style in row - if you need apply only in one row use rowIndex.
 	//TODO: add selectable option
-	children?: React.ReactNode[]; // add filter and pagination
+	children?: JSX.Element[] | null; // add filter and pagination
 }
 
 const TableProvider = <T extends Record<string, unknown>>({
@@ -41,7 +40,7 @@ const TableProvider = <T extends Record<string, unknown>>({
 			isValidElement(child) && (child as React.ReactElement).type === Filter,
 	) as React.ReactElement<FilterState<T>> | undefined;
 
-	const { dataTable, parseColumns, sortState } = useTableController<T>(
+	const { dataTable, parseColumns, sortState, paginationState } = useTableController<T>(
 		data,
 		config,
 		!!PaginationComponent,
@@ -60,7 +59,16 @@ const TableProvider = <T extends Record<string, unknown>>({
 				rowIsDisabled={rowIsDisabled}
 				rowStyle={rowStyle}
 			/>
-			{PaginationComponent}
+			{`paginationState.currentPage: ${paginationState.currentPage}, paginationState.totalPages: ${paginationState.totalPages}, paginationState.pageSize: ${paginationState.pageSize}`}
+			{PaginationComponent &&
+				React.cloneElement(PaginationComponent, {
+					...PaginationComponent.props,
+					currentPage: paginationState.currentPage,
+					totalPages: paginationState.totalPages,
+					pageSize: paginationState.pageSize,
+					action: paginationState.action,
+					pageSizeAction: paginationState.pageSizeAction,
+				})}
 		</div>
 	);
 };

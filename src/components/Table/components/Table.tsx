@@ -1,4 +1,4 @@
-import { ArrowDownAZ, ArrowUpAZ } from "lucide-react";
+import { IconSwitchVertical } from "@tabler/icons-react";
 import React, { useCallback, useMemo } from "react";
 import { formatCellToString } from "../helpers";
 import type { SortState } from "../hooks/use-table-controller.hook";
@@ -55,11 +55,7 @@ const Table = <T extends Record<string, any>>({
 							);
 						}}
 					>
-						{sortState.direction === SortDirectionEnum.Desc ? (
-							<ArrowUpAZ data-testid="arrow-up" />
-						) : (
-							<ArrowDownAZ data-testid="arrow-down" />
-						)}
+						<IconSwitchVertical stroke={2} />
 					</button>
 				) : null,
 			);
@@ -129,21 +125,19 @@ const Table = <T extends Record<string, any>>({
 	}, [dataTable, rowIsDisabled, onRowClick, mapperColumn, rowStyle]);
 
 	return (
-		<div style={{ overflowX: "auto" }} className="container">
-			<table id="table" data-testid="table">
-				{dataTable.length === 0 ? (
-					<EmptyState colSpan={parseColumns.length} />
-				) : (
-					<React.Fragment>
-						<thead>
-							<tr>{headerColumns}</tr>
-						</thead>
+		<table id="table" data-testid="table">
+			{dataTable.length === 0 ? (
+				<EmptyState colSpan={parseColumns.length} />
+			) : (
+				<React.Fragment>
+					<thead>
+						<tr>{headerColumns}</tr>
+					</thead>
 
-						<tbody>{bodyRows}</tbody>
-					</React.Fragment>
-				)}
-			</table>
-		</div>
+					<tbody>{bodyRows}</tbody>
+				</React.Fragment>
+			)}
+		</table>
 	);
 };
 

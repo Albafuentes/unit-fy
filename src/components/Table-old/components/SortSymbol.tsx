@@ -1,4 +1,4 @@
-import { ArrowDownAZ, ArrowDownUp, ArrowUpAZ } from "lucide-react";
+
 import type { SortDirection } from "../hooks/use-table-sort.hook";
 
 export interface SortSymbolProps {
@@ -17,11 +17,11 @@ const SortSymbol: React.FC<SortSymbolProps> = ({ isSorted, sortDirection }) => {
 	// ArrowDown = Z→A (descending, default)
 
 	if (isSorted && sortDirection === "asc") {
-		return <ArrowUpAZ style={defaultStyles} data-testid="arrow-up" />;
+		return <span>{"↑"}</span>;
 	} else if (isSorted && sortDirection === "desc") {
-		return <ArrowDownAZ style={defaultStyles} data-testid="arrow-down" />;
+		return <span>{"↓"}</span>;
 	} else {
-		return <ArrowDownUp style={defaultStyles} data-testid="arrow-down-up" />;
+		return <span>{"↕"}</span>;
 	}
 };
 

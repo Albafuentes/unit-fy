@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from "../config";
 import {
 	buildColumns,
@@ -27,7 +27,7 @@ export type PaginationState = {
 	currentPage: number;
 	totalPages: number;
 	pageSize: number;
-	action: (page: number) => void;
+	action: (page: number, pageSize?: number) => void;
 	pageSizeAction: (pageSize: number) => void;
 };
 
@@ -38,9 +38,57 @@ export const useTableController = <T extends object>(
 	paginationProps?: Omit<PaginationState, "action">,
 	hasFilter: boolean = false,
 ) => {
-	const [dataTable, setDataTable] = useState(data);
+	const [dataTable, setDataTable] = useState<T[]>(() => {
+		if (!hasPagination) {
+			return data;
+		}
+
+		return paginatedData(
+			data,
+			paginationProps?.currentPage ?? DEFAULT_PAGE_NUMBER,
+			paginationProps?.pageSize ?? DEFAULT_PAGE_SIZE,
+		);
+	});
 	const [parseColumns, setParseColumns] = useState(
 		buildColumns<T>(data, config),
+	);
+
+	//--- Pagination Functionality
+
+	const [paginationState, setPaginationState] = useState<PaginationState>({
+		currentPage: paginationProps?.currentPage ?? DEFAULT_PAGE_NUMBER,
+		totalPages: Math.ceil(
+			data.length / (paginationProps?.pageSize ?? DEFAULT_PAGE_SIZE),
+		),
+		pageSize: paginationProps?.pageSize ?? DEFAULT_PAGE_SIZE,
+		action: (page: number, pageSize?: number) => hasPagination && actionPagination(page, pageSize),
+		pageSizeAction: (pageSize: number) =>
+			hasPagination && pageSizeAction(pageSize),
+	});
+
+	const pageSizeAction = (newPageSize: number) => {
+		actionPagination(paginationState.currentPage, newPageSize);
+	};
+
+	const actionPagination = useMemo(
+		() => (page: number, pageSize?: number) => {
+			if (!hasPagination) {
+				return;
+			}
+			const effectivePageSize = pageSize ?? paginationState.pageSize;
+			const newData = paginatedData(data, page, effectivePageSize);
+			setDataTable(newData);
+
+			setParseColumns(buildColumns<T>(newData, config));
+
+			setPaginationState((prevState) => ({
+				...prevState,
+				currentPage: page,
+				pageSize: effectivePageSize,
+				totalPages: Math.ceil(data.length / effectivePageSize),
+			}));
+		},
+		[data, hasPagination, config, paginationState.pageSize],
 	);
 
 	//--- Sort Functionality
@@ -97,56 +145,6 @@ export const useTableController = <T extends object>(
 			hasFilter && actionFilter(keyAccessor, value);
 		},
 	});
-
-	//--- Pagination Functionality
-
-	const [paginationState, setPaginationState] = useState<PaginationState>({
-		currentPage: paginationProps?.currentPage ?? DEFAULT_PAGE_NUMBER,
-		totalPages: Math.ceil(
-			dataTable.length / (paginationProps?.pageSize ?? DEFAULT_PAGE_SIZE),
-		),
-		pageSize: paginationProps?.pageSize ?? DEFAULT_PAGE_SIZE,
-		action: (page: number) => hasPagination && actionPagination(page),
-		pageSizeAction: (pageSize: number) =>
-			hasPagination && pageSizeActionSort(pageSize),
-	});
-
-	const pageSizeActionSort = (pageSize: number) => {
-		setPaginationState((prevState) => ({
-			...prevState,
-			pageSize,
-		}));
-		actionPagination(paginationState.currentPage, pageSize);
-	};
-
-	const actionPagination = useMemo(
-		() => (page: number, pageSize?: number) => {
-			if (!hasPagination) {
-				return;
-			}
-			const newData = paginatedData(
-				dataTable,
-				page,
-				pageSize ?? paginationState.pageSize,
-			);
-			setDataTable(newData);
-
-			const buildedColumns = buildColumns<T>(newData, config);
-			setParseColumns(buildedColumns);
-
-			setPaginationState((prevState) => ({
-				...prevState,
-				currentPage: page,
-			}));
-		},
-		[dataTable, hasPagination, paginationState.pageSize, config],
-	);
-
-	useEffect(() => {
-		if (hasPagination) {
-			actionPagination(paginationState.currentPage);
-		}
-	}, [actionPagination, paginationState.currentPage, hasPagination]);
 
 	return {
 		dataTable,

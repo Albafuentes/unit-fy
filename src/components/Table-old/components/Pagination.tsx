@@ -1,4 +1,3 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { UseTablePaginationExports } from "../hooks/use-table-pagination.hook";
 
 type PaginationButtonType = "previous" | "next" | number;
@@ -20,9 +19,9 @@ const PaginationButton: React.FC<PaginationButtonProps> = ({
 	const value = () => {
 		switch (type) {
 			case "previous":
-				return <ChevronLeft />;
+				return <span>{"<"}</span>;
 			case "next":
-				return <ChevronRight />;
+				return <span>{">"}</span>;
 			default:
 				return <span>{type}</span>;
 		}
