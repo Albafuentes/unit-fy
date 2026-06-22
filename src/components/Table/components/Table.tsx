@@ -1,6 +1,6 @@
 import { ArrowDownAZ, ArrowUpAZ } from "lucide-react";
 import React, { useCallback, useMemo } from "react";
-import { formatCellToString } from "../helpers/format.helper";
+import { formatCellToString } from "../helpers";
 import type { SortState } from "../hooks/use-table-controller.hook";
 import { SortDirectionEnum, type TableTypes } from "../types/table.types";
 import EmptyState from "./EmptyState";

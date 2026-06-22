@@ -1,4 +1,4 @@
-import TableComponent from "./components/Table";
+import {Table as TableComponent} from "./components";
 import type { TableProviderProps } from "./TableProvider";
 import TableProvider from "./TableProvider";
 

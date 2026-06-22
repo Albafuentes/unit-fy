@@ -5,8 +5,9 @@ const Pagination: React.FC<PaginationState> = ({
 	totalPages,
 	pageSize,
 	action,
+	pageSizeAction,
 }) => {
-    console.log(currentPage, totalPages, pageSize, action);
+    console.log(currentPage, totalPages, pageSize, action, pageSizeAction);
 	return <div>Pagination</div>;
 };
 

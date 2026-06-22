@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from "../config";
-import { buildColumns } from "../helpers/columns.helper";
-import { sortedData } from "../helpers/sort.helper";
+import {
+	buildColumns,
+	filteredData,
+	paginatedData,
+	sortedData,
+} from "../helpers";
 import type { TableTypes } from "../types/table.types";
 
 export type SortState<T> = {
@@ -15,7 +19,7 @@ export type SortState<T> = {
 };
 
 export type FilterState<T> = {
-	filters:{keyAccessor: keyof T | null, value: string | null}[];
+	filters: { keyAccessor: keyof T | null; value: string | null }[];
 	action: (keyAccessor: keyof T, value: string) => void;
 };
 
@@ -24,6 +28,7 @@ export type PaginationState = {
 	totalPages: number;
 	pageSize: number;
 	action: (page: number) => void;
+	pageSizeAction: (pageSize: number) => void;
 };
 
 export const useTableController = <T extends object>(
@@ -74,19 +79,12 @@ export const useTableController = <T extends object>(
 			return;
 		}
 
-		const filteredData = data.filter((row) => {
-			const cellValue = row[keyAccessor];
-			if (cellValue === null || cellValue === undefined) {
-				return false;
-			}
-			return String(cellValue).toLowerCase().includes(value.toLowerCase());
-		});
+		const newData = filteredData(data, String(keyAccessor), value);
+		setDataTable(newData);
 
-		setDataTable(filteredData);
-
-		const buildedColumns = buildColumns<T>(filteredData, config);
-
+		const buildedColumns = buildColumns<T>(newData, config);
 		setParseColumns(buildedColumns);
+
 		setFilteredState((prevState) => ({
 			...prevState,
 			filters: [...prevState.filters, { keyAccessor, value }],
@@ -109,24 +107,39 @@ export const useTableController = <T extends object>(
 		),
 		pageSize: paginationProps?.pageSize ?? DEFAULT_PAGE_SIZE,
 		action: (page: number) => hasPagination && actionPagination(page),
+		pageSizeAction: (pageSize: number) =>
+			hasPagination && pageSizeActionSort(pageSize),
 	});
 
+	const pageSizeActionSort = (pageSize: number) => {
+		setPaginationState((prevState) => ({
+			...prevState,
+			pageSize,
+		}));
+		actionPagination(paginationState.currentPage, pageSize);
+	};
+
 	const actionPagination = useMemo(
-		() => (page: number) => {
+		() => (page: number, pageSize?: number) => {
 			if (!hasPagination) {
 				return;
 			}
-			const paginatedData = dataTable.slice(
-				(page - 1) * paginationState.pageSize,
-				page * paginationState.pageSize,
+			const newData = paginatedData(
+				dataTable,
+				page,
+				pageSize ?? paginationState.pageSize,
 			);
-			setDataTable(paginatedData);
+			setDataTable(newData);
+
+			const buildedColumns = buildColumns<T>(newData, config);
+			setParseColumns(buildedColumns);
+
 			setPaginationState((prevState) => ({
 				...prevState,
 				currentPage: page,
 			}));
 		},
-		[dataTable, hasPagination, paginationState.pageSize],
+		[dataTable, hasPagination, paginationState.pageSize, config],
 	);
 
 	useEffect(() => {

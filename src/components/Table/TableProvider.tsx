@@ -1,14 +1,12 @@
 import "./table.css";
 import type React from "react";
 import { isValidElement } from "react";
-import Filter from "./components/Filter";
-import Pagination from "./components/Pagination";
-import Table from "./components/Table";
+import { Filter, Pagination, Table } from "./components";
 import {
 	type FilterState,
 	type PaginationState,
 	useTableController,
-} from "./hooks/use-table-controller.hook";
+} from "./hooks";
 import type { TableTypes } from "./types/table.types";
 
 export interface TableProviderProps<T extends object> {

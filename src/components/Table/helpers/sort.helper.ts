@@ -1,4 +1,4 @@
-import { isAValidDate } from "../../../helpers/format.helper";
+import { isAValidDate } from "@/helpers/format.helper";
 import { SortDirectionEnum } from "../types/table.types";
 
 const detectDataType = (value: unknown): "date" | "number" | "string" => {
