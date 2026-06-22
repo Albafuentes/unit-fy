@@ -49,7 +49,7 @@ const TableProvider = <T extends Record<string, unknown>>({
 	);
 
 	return (
-		<div style={{ overflowX: "auto" }} className="container">
+		<div style={{ overflowX: "auto" }} id="table-container">
 			{FilterComponent}
 			<Table<T>
 				dataTable={dataTable}
@@ -59,7 +59,6 @@ const TableProvider = <T extends Record<string, unknown>>({
 				rowIsDisabled={rowIsDisabled}
 				rowStyle={rowStyle}
 			/>
-			{`paginationState.currentPage: ${paginationState.currentPage}, paginationState.totalPages: ${paginationState.totalPages}, paginationState.pageSize: ${paginationState.pageSize}`}
 			{PaginationComponent &&
 				React.cloneElement(PaginationComponent, {
 					...PaginationComponent.props,

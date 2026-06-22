@@ -33,11 +33,16 @@ const Pagination: React.FC<
 	return (
 		<div id="pagination">
 			<p>
-				<span>{`Resultados ${currentPage}-`}</span>
+				Página {currentPage} de {totalPages}
+			</p>
+
+			<label htmlFor="page-size">
+				Filas por página
 				<select
+					id="page-size"
 					name="page-size"
-					onChange={(e) => pageSizeAction?.(Number(e.target.value))}
 					value={pageSize}
+					onChange={(e) => pageSizeAction?.(Number(e.target.value))}
 				>
 					{DEFAULT_PAGE_SIZE_OPTIONS.map((size) => (
 						<option key={size} value={size}>
@@ -45,8 +50,8 @@ const Pagination: React.FC<
 						</option>
 					))}
 				</select>
-				<span>{` of ${totalPages}`}</span>
-			</p>
+			</label>
+
 			<div>
 				<button
 					key={start - 1}
