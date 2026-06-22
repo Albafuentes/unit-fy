@@ -1,12 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import React from "react";
 import { fn } from "storybook/test";
-import Table from "./Table";
+import Table from "./index";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
 	title: "Table",
-	component: Table,
+	component: Table.Provider,
 	parameters: {
 		// Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout
 		layout: "padded",
@@ -17,7 +17,7 @@ const meta = {
 	argTypes: {},
 	// Use `fn` to spy on the onClick arg, which will appear in the actions panel once invoked: https://storybook.js.org/docs/essentials/actions#story-args
 	args: { onRowClick: fn() },
-} satisfies Meta<typeof Table>;
+} satisfies Meta<typeof Table.Provider>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -39,7 +39,11 @@ export const Primary: Story = {
 				header: "boolean",
 				renderType: "boolean" as const,
 			},
-			{ accessorKey: "colNumber", header: "number", renderType: "number" as const },
+			{
+				accessorKey: "colNumber",
+				header: "number",
+				renderType: "number" as const,
+			},
 			{
 				accessorKey: "colPercent",
 				header: "%",
@@ -63,7 +67,8 @@ export const Primary: Story = {
 			{
 				accessorKey: "colCustom",
 				header: "Custom",
-				cell: (value) => React.createElement("strong", null, String(value)),
+				cell: (value: unknown) =>
+					React.createElement("strong", null, String(value)),
 			},
 		],
 		data: [

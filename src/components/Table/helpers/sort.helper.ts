@@ -1,5 +1,5 @@
-import { isAValidDate } from "@/helpers/format.helper";
-import { SortDirectionEnum, type TableTypes } from "../types/table.types";
+import { isAValidDate } from "../../../helpers/format.helper";
+import { SortDirectionEnum } from "../types/table.types";
 
 const detectDataType = (value: unknown): "date" | "number" | "string" => {
 	if (value === null || value === undefined) return "string";

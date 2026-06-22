@@ -1,38 +1,30 @@
-import "./table.css";
 import { ArrowDownAZ, ArrowUpAZ } from "lucide-react";
 import React, { useCallback, useMemo } from "react";
-import EmptyState from "./components/EmptyState";
-
-import { formatCellToString } from "./helpers/format.helper";
-
-import { useTableController } from "./hooks/use-table-controller.hook";
-
-import { SortDirectionEnum, type TableTypes } from "./types/table.types";
+import { formatCellToString } from "../helpers/format.helper";
+import type { SortState } from "../hooks/use-table-controller.hook";
+import { SortDirectionEnum, type TableTypes } from "../types/table.types";
+import EmptyState from "./EmptyState";
 
 export interface TableProps<T extends object> {
-	config?: TableTypes.Column<T>[];
-	data: T[];
-	onRowClick?: (_data: T, _rowIndex: number) => void; // onClick in row - if you need apply only in one row use rowIndex.
-	rowIsDisabled?: (_data: T, _rowIndex: number) => boolean; // disable row - if you need apply only in one row use rowIndex.
+	parseColumns: TableTypes.Column<T>[];
+	sortState: SortState<T>;
+	dataTable: T[];
+	onRowClick?: (_data: T, _rowIndex: number) => void;
+	rowIsDisabled?: (_data: T, _rowIndex: number) => boolean;
 	rowStyle?: (
 		_data: T,
 		_rowIndex: number,
-	) => React.HTMLAttributes<HTMLTableRowElement>; // apply style in row - if you need apply only in one row use rowIndex.
-	//TODO: add selectable option
+	) => React.HTMLAttributes<HTMLTableRowElement>;
 }
 
 const Table = <T extends Record<string, any>>({
-	config,
-	data,
+	dataTable,
+	parseColumns,
+	sortState,
 	onRowClick,
 	rowIsDisabled,
 	rowStyle,
 }: TableProps<T>): React.JSX.Element => {
-	const { dataTable, parseColumns, sortState } = useTableController<T>(
-		data,
-		config,
-	);
-
 	const headerColumns = useMemo(() => {
 		return parseColumns.map((column: TableTypes.Column<T>) => {
 			return React.createElement(
