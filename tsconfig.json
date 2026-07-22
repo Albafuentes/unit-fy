@@ -1,19 +1,26 @@
 {
-    "compilerOptions": {
-      "target": "ES6",
-      "module": "ESNext",
-      "lib": ["DOM", "ESNext"],
-      "declaration": true,
-      "outDir": "dist",
-      "strict": true,
-      "jsx": "react-jsx",
-      "moduleResolution": "bundler",
-      "esModuleInterop": true,
-      "skipLibCheck": true,
+	"compilerOptions": {
+		"target": "ES6",
+		"module": "ESNext",
+		"lib": ["DOM", "ESNext"],
+		"declaration": true,
+		"outDir": "dist",
+		"strict": true,
+		"jsx": "react-jsx",
+		"moduleResolution": "bundler",
+		"esModuleInterop": true,
+		"skipLibCheck": true,
 
-      "paths": {
-        "@/*": ["./src/*"]
-      }
-    },
-    "include": ["src", "vitest.setup.ts", "vitest.config.ts"]
-  }
+		"paths": {
+			"@/*": ["./src/*"]
+		}
+	},
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.tsx",
+		"src/**/*.d.ts",
+		"vitest.setup.ts",
+		"vitest.config.ts",
+		"vitest.shims.d.ts" // ← Agregar esta línea
+	]
+}
