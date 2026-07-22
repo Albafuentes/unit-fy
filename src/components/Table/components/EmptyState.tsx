@@ -1,4 +1,4 @@
-function EmptyState({ colSpan }: { colSpan: number }) {
+function EmptyState({ colSpan }: { colSpan: number }): React.JSX.Element {
 	return (
 		<tbody>
 			<tr>

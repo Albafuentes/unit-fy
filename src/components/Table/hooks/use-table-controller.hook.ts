@@ -18,8 +18,10 @@ export type SortState<T> = {
 	) => void;
 };
 
+export type Filters<T> = { keyAccessor: keyof T | null; value: string | null };
+
 export type FilterState<T> = {
-	filters: { keyAccessor: keyof T | null; value: string | null }[];
+	filters: Filters<T>[];
 	action: (keyAccessor: keyof T, value: string) => void;
 };
 
@@ -127,7 +129,7 @@ export const useTableController = <T extends object>(
 			return;
 		}
 
-		const newData = filteredData(data, String(keyAccessor), value);
+		const newData = filteredData(data, keyAccessor, value);
 		setDataTable(newData);
 
 		const buildedColumns = buildColumns<T>(newData, config);

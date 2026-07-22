@@ -142,4 +142,4 @@ const Table = <T extends Record<string, any>>({
 };
 
 export default Table;
-Table.displayName = "Table";
+Table.displayName = "Table.Content";

@@ -1,13 +1,20 @@
-import {Table as TableComponent} from "./components";
+import { Filter, Pagination, Table as TableContent } from "./components";
 import type { TableProviderProps } from "./TableProvider";
 import TableProvider from "./TableProvider";
 
-type TableWithProvider = typeof TableComponent & {
-	Provider: typeof TableProvider;
+// Crear el objeto Table con sus sub-componentes
+const Table = {
+    Provider: TableProvider,
+    Content: TableContent,
+    Filter: Filter,
+    Pagination: Pagination,
 };
 
-const Table = TableComponent as TableWithProvider;
+// Adjuntar los sub-componentes
 Table.Provider = TableProvider;
+Table.Content = TableContent;
+Table.Filter = Filter;
+Table.Pagination = Pagination;
 
 export default Table;
 export { TableProvider, type TableProviderProps };

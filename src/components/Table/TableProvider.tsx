@@ -1,6 +1,11 @@
 import "./table.css";
 import React, { isValidElement, type JSX } from "react";
 import { Filter, Pagination, Table } from "./components";
+import type {
+	PrivatePaginationProps,
+	PublicPaginationProps,
+} from "./components/Pagination";
+import type { TableProps } from "./components/Table";
 import {
 	type FilterState,
 	type PaginationState,
@@ -11,14 +16,13 @@ import type { TableTypes } from "./types/table.types";
 export interface TableProviderProps<T extends object> {
 	config?: TableTypes.Column<T>[];
 	data: T[];
-	onRowClick?: (_data: T, _rowIndex: number) => void; // onClick in row - if you need apply only in one row use rowIndex.
-	rowIsDisabled?: (_data: T, _rowIndex: number) => boolean; // disable row - if you need apply only in one row use rowIndex.
+	onRowClick?: (_data: T, _rowIndex: number) => void;
+	rowIsDisabled?: (_data: T, _rowIndex: number) => boolean;
 	rowStyle?: (
 		_data: T,
 		_rowIndex: number,
-	) => React.HTMLAttributes<HTMLTableRowElement>; // apply style in row - if you need apply only in one row use rowIndex.
-	//TODO: add selectable option
-	children?: JSX.Element[] | null; // add filter and pagination
+	) => React.HTMLAttributes<HTMLTableRowElement>;
+	children: JSX.Element | JSX.Element[];
 }
 
 const TableProvider = <T extends Record<string, unknown>>({
@@ -29,38 +33,59 @@ const TableProvider = <T extends Record<string, unknown>>({
 	rowStyle,
 	children,
 }: TableProviderProps<T>): React.JSX.Element => {
-	const PaginationComponent = children?.find(
-		(child) =>
-			isValidElement(child) &&
-			(child as React.ReactElement).type === Pagination,
-	) as React.ReactElement<PaginationState> | undefined;
+	// Extraer los sub-componentes de los children con tipado correcto
+	const childrenArray = React.Children.toArray(children);
 
-	const FilterComponent = children?.find(
-		(child) =>
-			isValidElement(child) && (child as React.ReactElement).type === Filter,
+	const FilterComponent = childrenArray.find(
+		(child) => isValidElement(child) && child.type === Filter,
 	) as React.ReactElement<FilterState<T>> | undefined;
 
-	const { dataTable, parseColumns, sortState, paginationState } = useTableController<T>(
-		data,
-		config,
-		!!PaginationComponent,
-		PaginationComponent ? PaginationComponent.props : undefined,
-		!!FilterComponent,
-	);
+	const TableComponent = childrenArray.find(
+		(child) => isValidElement(child) && child.type === Table,
+	) as React.ReactElement<TableProps<T>> | undefined;
+
+	const PaginationComponent = childrenArray.find(
+		(child) => isValidElement(child) && child.type === Pagination,
+	) as
+		| React.ReactElement<
+				PublicPaginationProps & Partial<PrivatePaginationProps>
+		  >
+		| undefined;
+
+	const { dataTable, parseColumns, sortState, paginationState } =
+		useTableController<T>(
+			data,
+			config,
+			!!PaginationComponent,
+			PaginationComponent
+				? (PaginationComponent.props as Omit<PaginationState, "action">)
+				: undefined,
+			!!FilterComponent,
+		);
 
 	return (
 		<div style={{ overflowX: "auto" }} id="table-container">
-			{FilterComponent}
-			<Table<T>
-				dataTable={dataTable}
-				parseColumns={parseColumns}
-				sortState={sortState}
-				onRowClick={onRowClick}
-				rowIsDisabled={rowIsDisabled}
-				rowStyle={rowStyle}
-			/>
+			{FilterComponent &&
+				React.cloneElement(FilterComponent, {
+					...FilterComponent.props,
+					// Las props de FilterState ya vienen del hook, si es necesario inyectarlas
+				})}
+
+			{TableComponent &&
+				React.cloneElement<TableProps<T>>(TableComponent, {
+					...TableComponent.props,
+					dataTable,
+					parseColumns,
+					sortState,
+					onRowClick,
+					rowIsDisabled,
+					rowStyle,
+				})}
+
 			{PaginationComponent &&
-				React.cloneElement(PaginationComponent, {
+				React.cloneElement<
+					PublicPaginationProps & Partial<PrivatePaginationProps>
+				>(PaginationComponent, {
 					...PaginationComponent.props,
 					currentPage: paginationState.currentPage,
 					totalPages: paginationState.totalPages,
@@ -73,4 +98,4 @@ const TableProvider = <T extends Record<string, unknown>>({
 };
 
 export default TableProvider;
-TableProvider.displayName = "TableProvider";
+TableProvider.displayName = "Table.Provider";

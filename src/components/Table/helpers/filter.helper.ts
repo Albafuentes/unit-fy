@@ -1,4 +1,8 @@
-export const filteredData = (data: any[], keyAccessor: string, value: string) => {
+export const filteredData = <T extends object>(
+	data: T[],
+	keyAccessor: keyof T,
+	value: string,
+) => {
 	return data.filter((row) => {
 		const cellValue = row[keyAccessor];
 		if (cellValue === null || cellValue === undefined) {

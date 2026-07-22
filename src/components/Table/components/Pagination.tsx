@@ -13,9 +13,13 @@ export type PrivatePaginationProps = Pick<
 	"currentPage" | "action" | "pageSizeAction"
 >;
 
-const Pagination: React.FC<
-	PublicPaginationProps & Partial<PrivatePaginationProps>
-> = ({ currentPage, totalPages, pageSize, action, pageSizeAction }) => {
+const Pagination = ({
+	currentPage,
+	totalPages,
+	pageSize,
+	action,
+	pageSizeAction,
+}: PublicPaginationProps & Partial<PrivatePaginationProps>): React.JSX.Element => {
 	const [start, setStart] = useState(0);
 
 	const pages = useMemo(
@@ -123,4 +127,4 @@ const Pagination: React.FC<
 };
 
 export default Pagination;
-Pagination.displayName = "Pagination";
+Pagination.displayName = "Table.Pagination";
