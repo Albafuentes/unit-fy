@@ -1,4 +1,4 @@
-import { Button } from "../../Button-example/Button";
+import { Button } from "../../Button/Button";
 import type { FilterState, Filters } from "../hooks/use-table-controller.hook";
 
 const Filter = <T extends object>({

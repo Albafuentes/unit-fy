@@ -2,7 +2,7 @@ import type React from "react";
 
 import "./button.css";
 
-export interface ButtonProps {
+export interface ButtonExternalProps {
 	/** Is this the principal call to action on the page? */
 	primary?: boolean;
 	/** What background color to use */
@@ -15,6 +15,12 @@ export interface ButtonProps {
 	onClick?: () => void;
 }
 
+export type ButtonProps = ButtonExternalProps &
+	React.DetailedHTMLProps<
+		React.ButtonHTMLAttributes<HTMLButtonElement>,
+		HTMLButtonElement
+	>;
+
 /** Primary UI component for user interaction */
 export const Button = ({
 	primary = false,
@@ -22,7 +28,7 @@ export const Button = ({
 	backgroundColor,
 	children,
 	...props
-}: ButtonProps & React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement>) => {
+}: ButtonProps) => {
 	const mode = primary
 		? "storybook-button--primary"
 		: "storybook-button--secondary";

@@ -1,0 +1,28 @@
+.menu-container {
+	display: inline-block;
+
+	menu {
+		position: absolute;
+		margin: 0;
+
+		&.right-start {
+			top: anchor(top);
+			left: anchor(right);
+		}
+
+		&.right-end {
+			top: anchor(bottom);
+			left: anchor(right);
+		}
+
+		&.left-start {
+			top: anchor(top);
+			left: anchor(left);
+		}
+
+		&.left-end {
+			top: anchor(bottom);
+			left: anchor(left);
+		}
+	}
+}
