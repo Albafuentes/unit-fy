@@ -7,21 +7,25 @@ export type MenuItemProps = { children: React.ReactNode } & {
 	as?: keyof React.JSX.IntrinsicElements;
 };
 
+export const DEFAULT_ELEMENT = "p";
+
 const MenuItem = ({ children, value, action, as }: MenuItemProps) => {
 	const props = {
 		...((as === "button" || as === "a") && action
 			? { onClick: () => action(value) }
 			: {}),
 	};
-	return (
-		<li>
-			{as === "button" ? (
-				<Button {...props}>{children}</Button>
-			) : (
-				React.createElement(as ?? "button", props, children)
-			)}
-		</li>
-	);
+
+	const Element = () => {
+		switch (as) {
+			case "button":
+				return <Button {...props}>{children}</Button>;
+			// Add more cases here for other elements if needed
+			default:
+				return React.createElement(as ?? DEFAULT_ELEMENT, props, children);
+		}
+	};
+	return <li>{<Element />}</li>;
 };
 
 export default MenuItem;

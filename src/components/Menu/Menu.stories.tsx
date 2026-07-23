@@ -50,6 +50,9 @@ export const Default: Story = {
 
 export const Empty: Story = {
 	args: {
-		children: React.createElement(Menu.Trigger, null, "Open menu"),
+		children: [
+			React.createElement(Menu.Trigger, null, "Open menu"),
+			React.createElement(Menu.Content, null, "Menu content"),
+		],
 	},
 };

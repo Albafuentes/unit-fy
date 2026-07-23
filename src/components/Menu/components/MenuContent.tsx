@@ -4,16 +4,18 @@ export type MenuContentProps = React.DetailedHTMLProps<
 > & {
 	children: React.ReactNode;
 	"position-anchor"?: string;
+	id?: string;
 	placement?: "right-start" | "right-end" | "left-start" | "left-end";
 };
 const MenuContent = ({
 	children,
 	"position-anchor": positionAnchor,
+	id,
 	placement: position = "left-end",
 }: MenuContentProps) => {
 	return (
 		<menu
-			id="menu"
+			id={id}
 			popover="auto"
 			aria-label="popover"
 			position-anchor={positionAnchor}
