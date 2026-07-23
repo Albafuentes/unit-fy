@@ -1,4 +1,4 @@
-import { Filter, Pagination, Table as TableContent } from "./components";
+import { Filter, Pagination, TableContent } from "./components";
 import type { TableProviderProps } from "./TableProvider";
 import TableProvider from "./TableProvider";
 

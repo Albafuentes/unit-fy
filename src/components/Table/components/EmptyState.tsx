@@ -1,4 +1,4 @@
-function EmptyState({ colSpan }: { colSpan: number }): React.JSX.Element {
+const EmptyState = ({ colSpan }: { colSpan: number }): React.JSX.Element => {
 	return (
 		<tbody>
 			<tr>
@@ -12,6 +12,7 @@ function EmptyState({ colSpan }: { colSpan: number }): React.JSX.Element {
 			</tr>
 		</tbody>
 	);
-}
+};
 
 export default EmptyState;
+EmptyState.displayName = "Table.EmptyState";

@@ -5,7 +5,7 @@ import type { SortState } from "../hooks/use-table-controller.hook";
 import { SortDirectionEnum, type TableTypes } from "../types/table.types";
 import EmptyState from "./EmptyState";
 
-export interface TableProps<T extends object> {
+export interface TableContentProps<T extends object> {
 	parseColumns: TableTypes.Column<T>[];
 	sortState: SortState<T>;
 	dataTable: T[];
@@ -17,14 +17,14 @@ export interface TableProps<T extends object> {
 	) => React.HTMLAttributes<HTMLTableRowElement>;
 }
 
-const Table = <T extends Record<string, any>>({
+const TableContent = <T extends Record<string, any>>({
 	dataTable,
 	parseColumns,
 	sortState,
 	onRowClick,
 	rowIsDisabled,
 	rowStyle,
-}: TableProps<T>): React.JSX.Element => {
+}: TableContentProps<T>): React.JSX.Element => {
 	const headerColumns = useMemo(() => {
 		return parseColumns.map((column: TableTypes.Column<T>) => {
 			return React.createElement(
@@ -126,20 +126,17 @@ const Table = <T extends Record<string, any>>({
 
 	return (
 		<table className="table" data-testid="table">
+			<thead>
+				<tr>{headerColumns}</tr>
+			</thead>
 			{dataTable.length === 0 ? (
 				<EmptyState colSpan={parseColumns.length} />
 			) : (
-				<React.Fragment>
-					<thead>
-						<tr>{headerColumns}</tr>
-					</thead>
-
-					<tbody>{bodyRows}</tbody>
-				</React.Fragment>
+				<tbody>{bodyRows}</tbody>
 			)}
 		</table>
 	);
 };
 
-export default Table;
-Table.displayName = "Table.Content";
+export default TableContent;
+TableContent.displayName = "Table.Content";
