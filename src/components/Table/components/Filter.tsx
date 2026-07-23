@@ -6,7 +6,7 @@ const Filter = <T extends object>({
 	action,
 }: FilterState<T>): React.JSX.Element => {
 	return (
-		<div>
+		<div className="table-filter">
 			{filters.map((filter: Filters<T>) => {
 				if (filter.keyAccessor === null || filter.value === null) {
 					return null;

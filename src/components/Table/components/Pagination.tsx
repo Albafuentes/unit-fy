@@ -35,7 +35,7 @@ const Pagination = ({
 	const canGoForward = end < totalPages;
 
 	return (
-		<div id="pagination">
+		<div className="table-pagination">
 			<p>
 				Página {currentPage} de {totalPages}
 			</p>

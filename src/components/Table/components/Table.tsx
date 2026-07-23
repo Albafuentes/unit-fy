@@ -125,7 +125,7 @@ const Table = <T extends Record<string, any>>({
 	}, [dataTable, rowIsDisabled, onRowClick, mapperColumn, rowStyle]);
 
 	return (
-		<table id="table" data-testid="table">
+		<table className="table" data-testid="table">
 			{dataTable.length === 0 ? (
 				<EmptyState colSpan={parseColumns.length} />
 			) : (

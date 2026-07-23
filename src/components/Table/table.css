@@ -2,7 +2,7 @@
 
 #table-container {
 	width: fit-content;
-	#table {
+	.table {
 		background-color: var(--color-white);
 		width: 100%;
 
@@ -105,7 +105,7 @@
 		}
 	}
 
-	#pagination {
+	.table-pagination {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -163,5 +163,16 @@
 				}
 			}
 		}
+	}
+	.table-filter {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		gap: 1rem;
+		flex-wrap: wrap;
+
+		width: 100%;
+
+		padding-block: var(--space-4);
 	}
 }
