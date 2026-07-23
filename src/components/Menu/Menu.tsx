@@ -55,6 +55,7 @@ const MenuProvider = ({ children }: MenuProviderProps) => {
 									key={item.props.value}
 									value={item.props.value}
 									action={item.props.action}
+									as={item.props.as || "button"}
 								>
 									{item.props.children}
 								</MenuItem>

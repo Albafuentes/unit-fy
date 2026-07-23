@@ -32,6 +32,18 @@ export const Default: Story = {
 				action: (value: string) => console.log(value),
 				children: "Item 1",
 			} as MenuItemProps),
+			React.createElement(Menu.Item, {
+				value: "item-2",
+				action: (value: string) => console.log(value),
+				as: "a",
+				children: "Item 2",
+			} as MenuItemProps),
+			React.createElement(Menu.Item, {
+				value: "item-3",
+				action: (value: string) => console.log(value),
+				as: "p",
+				children: "Item 3",
+			} as MenuItemProps),
 		],
 	},
 };

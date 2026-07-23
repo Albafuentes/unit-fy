@@ -1,27 +1,24 @@
-import { createElement, type JSX } from "react";
+import React from "react";
+import { Button } from "../../Button/Button";
 
 export type MenuItemProps = { children: React.ReactNode } & {
 	value: string;
 	action?: (value: string) => void;
-	as?: keyof JSX.IntrinsicElements;
+	as?: keyof React.JSX.IntrinsicElements;
 };
 
-const MenuItem = ({
-	children,
-	value,
-	action,
-	as = "button",
-}: MenuItemProps) => {
+const MenuItem = ({ children, value, action, as }: MenuItemProps) => {
+	const props = {
+		...((as === "button" || as === "a") && action
+			? { onClick: () => action(value) }
+			: {}),
+	};
 	return (
 		<li>
-			{createElement(
-				as,
-				{
-					...((as === "button" || as === "a") && action
-						? { onClick: () => action(value) }
-						: {}),
-				},
-				children,
+			{as === "button" ? (
+				<Button {...props}>{children}</Button>
+			) : (
+				React.createElement(as ?? "button", props, children)
 			)}
 		</li>
 	);
