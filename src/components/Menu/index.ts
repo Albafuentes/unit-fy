@@ -3,7 +3,7 @@ import MenuItem from "./components/MenuItem";
 import MenuTrigger from "./components/MenuTrigger";
 import MenuProvider, { type MenuProviderProps } from "./Menu";
 
-// Crear el objeto Table con sus sub-componentes
+// Crear el objeto menu con sus sub-componentes
 const Menu = {
 	Provider: MenuProvider,
 	Item: MenuItem,
