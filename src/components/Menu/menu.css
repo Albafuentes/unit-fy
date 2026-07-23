@@ -19,7 +19,7 @@
 		color: var(--color-gray_900);
 
 		overflow: hidden auto;
-		padding: var(--space-2);
+		padding: var(--space-1) var(--space-5);
 		scroll-padding: var(--space-2);
 
 		&.right-start {
@@ -63,7 +63,7 @@
 			}
 
 			& > *:not(button) {
-				margin-block: var(--space-1);
+				margin-block: var(--space-2);
 				margin-inline: 0;
 
 				padding-inline: var(--space-2);

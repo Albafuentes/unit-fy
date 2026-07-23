@@ -4,7 +4,7 @@ import "./button.css";
 
 export interface ButtonExternalProps {
 	/** Is this the principal call to action on the page? */
-	primary?: boolean;
+	variant?: "primary" | "secondary";
 	/** What background color to use */
 	backgroundColor?: string;
 	/** How large should the button be? */
@@ -23,19 +23,17 @@ export type ButtonProps = ButtonExternalProps &
 
 /** Primary UI component for user interaction */
 export const Button = ({
-	primary = false,
+	variant,
 	size = "medium",
 	backgroundColor,
 	children,
 	...props
 }: ButtonProps) => {
-	const mode = primary
-		? "storybook-button--primary"
-		: "storybook-button--secondary";
+	const mode = variant ? `button--${variant}` : "button--primary";
 	return (
 		<button
 			type="button"
-			className={["storybook-button", `storybook-button--${size}`, mode].join(
+			className={["button", `button--${size}`, mode].join(
 				" ",
 			)}
 			style={{ backgroundColor }}
