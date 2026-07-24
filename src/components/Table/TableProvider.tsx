@@ -1,13 +1,14 @@
 import "./table.css";
 import React, { isValidElement, type JSX } from "react";
-import { Filter, Pagination, Table } from "./components";
+import { Filter, Pagination, TableContent } from "./components";
+import type { FilterProps } from "./components/Filter";
 import type {
 	PrivatePaginationProps,
 	PublicPaginationProps,
 } from "./components/Pagination";
-import type { TableProps } from "./components/Table";
+import type { TableContentProps } from "./components/TableContent";
 import {
-	type FilterState,
+	type Filters,
 	type PaginationState,
 	useTableController,
 } from "./hooks";
@@ -38,11 +39,11 @@ const TableProvider = <T extends Record<string, unknown>>({
 
 	const FilterComponent = childrenArray.find(
 		(child) => isValidElement(child) && child.type === Filter,
-	) as React.ReactElement<FilterState<T>> | undefined;
+	) as React.ReactElement<FilterProps<T>> | undefined;
 
 	const TableComponent = childrenArray.find(
-		(child) => isValidElement(child) && child.type === Table,
-	) as React.ReactElement<TableProps<T>> | undefined;
+		(child) => isValidElement(child) && child.type === TableContent,
+	) as React.ReactElement<TableContentProps<T>> | undefined;
 
 	const PaginationComponent = childrenArray.find(
 		(child) => isValidElement(child) && child.type === Pagination,
@@ -52,27 +53,34 @@ const TableProvider = <T extends Record<string, unknown>>({
 		  >
 		| undefined;
 
-	const { dataTable, parseColumns, sortState, paginationState } =
-		useTableController<T>(
-			data,
-			config,
-			!!PaginationComponent,
-			PaginationComponent
-				? (PaginationComponent.props as Omit<PaginationState, "action">)
-				: undefined,
-			!!FilterComponent,
-		);
+	const {
+		dataTable,
+		parseColumns,
+		sortState,
+		paginationState,
+		actionFilter,
+		resetFilters,
+	} = useTableController<T>(
+		data,
+		config,
+		!!PaginationComponent,
+		PaginationComponent
+			? (PaginationComponent.props as Omit<PaginationState, "action">)
+			: undefined,
+		FilterComponent?.props.filters,
+	);
 
 	return (
 		<div style={{ overflowX: "auto" }} id="table-container">
 			{FilterComponent &&
-				React.cloneElement(FilterComponent, {
+				React.cloneElement<FilterProps<T>>(FilterComponent, {
 					...FilterComponent.props,
-					// Las props de FilterState ya vienen del hook, si es necesario inyectarlas
+					action: actionFilter,
+					reset: resetFilters,
 				})}
 
 			{TableComponent &&
-				React.cloneElement<TableProps<T>>(TableComponent, {
+				React.cloneElement<TableContentProps<T>>(TableComponent, {
 					...TableComponent.props,
 					dataTable,
 					parseColumns,

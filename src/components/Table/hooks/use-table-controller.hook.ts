@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { type JSX, useMemo, useState } from "react";
+import type { FilterProps } from "../components/Filter";
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from "../config";
 import {
 	buildColumns,
@@ -18,11 +19,13 @@ export type SortState<T> = {
 	) => void;
 };
 
-export type Filters<T> = { keyAccessor: keyof T | null; value: string | null };
-
-export type FilterState<T> = {
-	filters: Filters<T>[];
-	action: (keyAccessor: keyof T, value: string) => void;
+export type Filters<T> = {
+	keyAccessor: keyof T | null;
+	value: unknown;
+	render: (
+		action: () => void,
+		reset: () => void
+	) => JSX.Element;
 };
 
 export type PaginationState = {
@@ -38,7 +41,7 @@ export const useTableController = <T extends object>(
 	config: TableTypes.Column<T>[] | undefined,
 	hasPagination: boolean = false,
 	paginationProps?: Omit<PaginationState, "action">,
-	hasFilter: boolean = false,
+	filters?: Filters<T>[],
 ) => {
 	const [dataTable, setDataTable] = useState<T[]>(() => {
 		if (!hasPagination) {
@@ -55,6 +58,35 @@ export const useTableController = <T extends object>(
 		buildColumns<T>(data, config),
 	);
 
+	//--- Filter Functionality
+
+	const actionFilter = (value: unknown) => {
+		if (!value || !filters) return;
+
+		const newFilters: Filters<T>[] = filters
+			.filter((filter) => filter.value !== null && filter.value !== undefined)
+			.map((filter) => ({
+				keyAccessor: filter.keyAccessor,
+				value: filter.value,
+				render: filter.render,
+			}));
+
+		const filteredResult = newFilters.reduce((acc, filter) => {
+			if (filter.keyAccessor && filter.value) {
+				return filteredData(acc, filter.keyAccessor, String(filter.value));
+			}
+			return acc;
+		}, data);
+
+		setDataTable(filteredResult);
+		setParseColumns(buildColumns<T>(filteredResult, config));
+	};
+
+	const resetFilters = () => {
+		setDataTable(data);
+		setParseColumns(buildColumns<T>(data, config));
+	};
+
 	//--- Pagination Functionality
 
 	const [paginationState, setPaginationState] = useState<PaginationState>({
@@ -63,7 +95,8 @@ export const useTableController = <T extends object>(
 			data.length / (paginationProps?.pageSize ?? DEFAULT_PAGE_SIZE),
 		),
 		pageSize: paginationProps?.pageSize ?? DEFAULT_PAGE_SIZE,
-		action: (page: number, pageSize?: number) => hasPagination && actionPagination(page, pageSize),
+		action: (page: number, pageSize?: number) =>
+			hasPagination && actionPagination(page, pageSize),
 		pageSizeAction: (pageSize: number) =>
 			hasPagination && pageSizeAction(pageSize),
 	});
@@ -122,37 +155,12 @@ export const useTableController = <T extends object>(
 			actionSort(direction, keyAccessor),
 	});
 
-	//--- Filter Functionality
-	const actionFilter = (keyAccessor: keyof T, value: string) => {
-		if (!keyAccessor || !value) {
-			setDataTable(data);
-			return;
-		}
-
-		const newData = filteredData(data, keyAccessor, value);
-		setDataTable(newData);
-
-		const buildedColumns = buildColumns<T>(newData, config);
-		setParseColumns(buildedColumns);
-
-		setFilteredState((prevState) => ({
-			...prevState,
-			filters: [...prevState.filters, { keyAccessor, value }],
-		}));
-	};
-
-	const [filteredState, setFilteredState] = useState<FilterState<T>>({
-		filters: [],
-		action: (keyAccessor: keyof T, value: string) => {
-			hasFilter && actionFilter(keyAccessor, value);
-		},
-	});
-
 	return {
 		dataTable,
 		parseColumns,
 		sortState,
-		filteredState,
+		actionFilter,
+		resetFilters,
 		paginationState,
 	};
 };
