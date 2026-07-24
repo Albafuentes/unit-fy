@@ -6,12 +6,14 @@ export type MenuContentProps = React.DetailedHTMLProps<
 	"position-anchor"?: string;
 	id?: string;
 	placement?: "right-start" | "right-end" | "left-start" | "left-end";
+	size?: "sm" | "md" | "lg";
 };
 const MenuContent = ({
 	children,
 	"position-anchor": positionAnchor,
 	id,
 	placement: position = "left-end",
+	size = "md",
 	...props
 }: MenuContentProps) => {
 	return (
@@ -20,7 +22,7 @@ const MenuContent = ({
 			popover="auto"
 			aria-label="popover"
 			position-anchor={positionAnchor}
-			className={`${props.className ?? ""} ${position}`}
+			className={`${props.className ?? ""} menu-content--${position} menu-content--${size}`}
 			{...props}
 		>
 			{children}

@@ -221,6 +221,8 @@ const filterChildren = (
 					style={{
 						display: "flex",
 						flexDirection: "column",
+						justifyContent: "start",
+						alignItems: "start",
 						gap: "1rem",
 						paddingBlock: "0.5rem",
 					}}
@@ -230,6 +232,7 @@ const filterChildren = (
 						id="input"
 						value={value}
 						onChange={(e) => setValue(e.target.value)}
+						style={{ width: "100%" }}
 					/>
 					<div style={{ display: "flex", gap: "8px" }}>
 						<Button onClick={() => action(value)}>Filter</Button>

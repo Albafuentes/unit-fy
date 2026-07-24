@@ -2,6 +2,7 @@ import {
 	IconArrowDown,
 	IconArrowUp,
 	IconEyeOff,
+	IconSelector,
 } from "@tabler/icons-react";
 import React, { useCallback, useMemo } from "react";
 import { Button } from "../../Button/Button";
@@ -49,30 +50,30 @@ const TableContent = <T extends Record<string, any>>({
 
 				column.isSortable ? (
 					<Menu.Provider>
-						<Menu.Trigger>{column.header}</Menu.Trigger>
-						<Menu.Content>
+						<Menu.Trigger variant="link" className="th-sortable_trigger">{column.header}<IconSelector stroke={2} size={18}/></Menu.Trigger>
+						<Menu.Content size="sm">
 							<Menu.Item
 								as={Button}
-								variant="secondary"
+								variant="link"
 								action={() =>
 									sortState.action(SortDirectionEnum.Asc, column.accessorKey)
 								}
 							>
-								<IconArrowUp stroke={2} />
+								<IconArrowUp stroke={2}  size={18}/>
 								Sort Ascending
 							</Menu.Item>
 							<Menu.Item
 								as={Button}
-								variant="secondary"
+								variant="link"
 								action={() =>
 									sortState.action(SortDirectionEnum.Desc, column.accessorKey)
 								}
 							>
-								<IconArrowDown stroke={2} />
+								<IconArrowDown stroke={2}  size={18}/>
 								Sort Descending
 							</Menu.Item>
-							<Menu.Item as={Button} variant="secondary" withSeparator>
-								<IconEyeOff stroke={2} />
+							<Menu.Item as={Button} variant="link" withSeparator>
+								<IconEyeOff stroke={2}  size={18}/>
 								Hide Column
 							</Menu.Item>
 						</Menu.Content>

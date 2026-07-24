@@ -4,9 +4,8 @@ import "./button.css";
 
 export interface ButtonExternalProps {
 	/** Is this the principal call to action on the page? */
-	variant?: "primary" | "secondary";
-	/** What background color to use */
-	backgroundColor?: string;
+	variant?: "solid" | "outline" | "ghost" | "link";
+
 	/** How large should the button be? */
 	size?: "small" | "medium" | "large";
 	/** Button contents */
@@ -25,18 +24,15 @@ export type ButtonProps = ButtonExternalProps &
 export const Button = ({
 	variant,
 	size = "medium",
-	backgroundColor,
 	children,
+	className,
 	...props
 }: ButtonProps) => {
-	const mode = variant ? `button--${variant}` : "button--primary";
+	const mode = variant ? `button--${variant}` : "button--solid";
 	return (
 		<button
 			type="button"
-			className={["button", `button--${size}`, mode].join(
-				" ",
-			)}
-			style={{ backgroundColor }}
+			className={`button ${size ? `button--${size}` : ""} ${mode} ${className ?? ""}`}
 			{...props}
 		>
 			{children}
