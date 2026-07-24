@@ -51,7 +51,6 @@ const TableContent = <T extends Record<string, any>>({
 									? SortDirectionEnum.Asc
 									: SortDirectionEnum.Desc,
 								column.accessorKey,
-								dataTable,
 							);
 						}}
 					>
@@ -60,7 +59,7 @@ const TableContent = <T extends Record<string, any>>({
 				) : null,
 			);
 		});
-	}, [parseColumns, sortState, dataTable]);
+	}, [parseColumns, sortState]);
 
 	const mapperColumn = useCallback(
 		(rowIndex: number) => {

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import React, { type JSX } from "react";
 import { fn } from "storybook/test";
+import { Button } from "../Button/Button";
 import type { MenuItemProps } from "../Menu/components/MenuItem";
 import Menu from "../Menu/index";
 import type { FilterProps } from "./components/Filter";
@@ -207,23 +208,41 @@ export const TableWithPagination: Story = {
 };
 
 const filterChildren = (
-	action: (keyAccessor: any, value: any) => void,
+	action: (value: unknown) => void,
+	reset: () => void,
+	keyAccesor: string,
 ): JSX.Element => {
+	const [value, setValue] = React.useState("");
 	return (
 		<Menu.Provider>
-			<Menu.Trigger>Filter</Menu.Trigger>
+			<Menu.Trigger>{keyAccesor}</Menu.Trigger>
 			<Menu.Content>
 				<Menu.Item
-					value="item-1"
-					action={(value: string) => action("rawString", value)}
+					as="div"
+					style={{
+						display: "flex",
+						flexDirection: "column",
+						gap: "1rem",
+						paddingBlock: "0.5rem",
+					}}
 				>
-					Item 1
-				</Menu.Item>
-				<Menu.Item
-					value="item-2"
-					action={(value: string) => action("rawString", value)}
-				>
-					Item 2
+					<label htmlFor="input">{keyAccesor} value:</label>
+					<input
+						id="input"
+						value={value}
+						onChange={(e) => setValue(e.target.value)}
+					/>
+					<div style={{ display: "flex", gap: "8px" }}>
+						<Button onClick={() => action(value)}>Filter</Button>
+						<Button
+							onClick={() => {
+								setValue("");
+								reset();
+							}}
+						>
+							Reset
+						</Button>
+					</div>
 				</Menu.Item>
 			</Menu.Content>
 		</Menu.Provider>
@@ -280,7 +299,7 @@ export const TableWithFilter: Story = {
 		],
 		data: Array.from({ length: 80 }).map((_, index) => ({
 			rawString: index,
-			rawNumber: 3.14159,
+			rawNumber: Number((Math.random() * 100).toFixed(2)),
 			rawEmpty: "",
 			rawNull: null,
 			rawObject: { id: 1 },
@@ -301,44 +320,23 @@ export const TableWithFilter: Story = {
 				filters: [
 					{
 						keyAccessor: "rawString",
-						value: "5",
-						render: (
-							action: ( ) => void,
-							reset: () => void
-						) => (
-							<>
-								<button type="button" onClick={() => action()}>
-									filter
-								</button>{" "}
-								<button type="button" onClick={() => reset()}>
-									reset
-								</button>
-							</>
-						),
+						render: (action: (value: unknown) => void, reset: () => void) =>
+							filterChildren(action, reset, "rawString"),
 					},
 					{
 						keyAccessor: "rawNumber",
-						value: "3.14159",
-						render: (
-							action: ( ) => void,
-							reset: () => void
-						) => filterChildren(action),
+						render: (action: (value: unknown) => void, reset: () => void) =>
+							filterChildren(action, reset, "rawNumber"),
 					},
 					{
 						keyAccessor: "colCurrency",
-						value: "1999.5",
-						render: (
-							action: ( ) => void,
-							reset: () => void
-						) => filterChildren(action),
+						render: (action: (value: unknown) => void, reset: () => void) =>
+							filterChildren(action, reset, "colCurrency"),
 					},
 					{
 						keyAccessor: "colDateTime",
-						value: "2024-06-15T14:30:00Z",
-						render: (
-							action: ( ) => void,
-							reset: () => void
-						) => filterChildren(action),
+						render: (action: (value: unknown) => void, reset: () => void) =>
+							filterChildren(action, reset, "colDateTime"),
 					},
 				],
 			}),

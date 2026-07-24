@@ -1,13 +1,15 @@
 export const filteredData = <T extends object>(
 	data: T[],
 	keyAccessor: keyof T,
-	value: string,
+	value: unknown,
 ) => {
-	return data.filter((row) => {
-		const cellValue = row[keyAccessor];
-		if (cellValue === null || cellValue === undefined) {
+	return data.filter((item) => {
+		const itemValue = item[keyAccessor];
+		if (itemValue === undefined || itemValue === null) {
 			return false;
 		}
-		return String(cellValue).toLowerCase().includes(value.toLowerCase());
+		return String(itemValue)
+			.toLowerCase()
+			.includes(String(value).toLowerCase());
 	});
 };

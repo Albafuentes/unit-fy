@@ -16,12 +16,6 @@ const MenuProvider = ({ children }: MenuProviderProps) => {
 
 	const id = React.useId();
 
-	console.log("childrenArray", id, childrenArray);
-
-	const ItemsComponent = childrenArray.filter(
-		(child) => isValidElement(child) && child.type === MenuItem,
-	) as React.ReactElement<MenuItemProps>[];
-
 	const TriggerComponent = childrenArray.find(
 		(child) => isValidElement(child) && child.type === MenuTrigger,
 	) as React.ReactElement<MenuTriggerProps> | undefined;
@@ -32,6 +26,12 @@ const MenuProvider = ({ children }: MenuProviderProps) => {
 			child.type !== MenuTrigger &&
 			child.type !== MenuItem,
 	) as React.ReactElement<MenuContentProps> | undefined;
+
+	const ItemsComponent = React.Children.toArray(
+		ContentComponent?.props.children,
+	).filter(
+		(child) => isValidElement(child) && child.type === MenuItem,
+	) as React.ReactElement<MenuItemProps>[];
 
 	return (
 		<div className="menu-container">
@@ -51,16 +51,19 @@ const MenuProvider = ({ children }: MenuProviderProps) => {
 					id: `menu-${id}`,
 					children:
 						ItemsComponent.length === 0 ? (
-							<MenuItem value="noItems">No items</MenuItem>
+							<MenuItem>No items</MenuItem>
 						) : (
 							ItemsComponent.map((item) => (
 								<MenuItem
-									key={item.props.value}
-									value={item.props.value}
-									action={item.props.action}
-									as={item.props.as || DEFAULT_ELEMENT}
+									key={`menu-item-${id}`}
+									{...("action" in item.props &&
+										item.props?.action !== undefined && {
+											action: item.props.action,
+										})}
+									as={item.props?.as || DEFAULT_ELEMENT}
+									{...item.props}
 								>
-									{item.props.children}
+									{item.props?.children}
 								</MenuItem>
 							))
 						),

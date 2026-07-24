@@ -62,7 +62,7 @@
 				text-align: start;
 			}
 
-			& > *:not(button) {
+			& > p, & > span, & > a {
 				margin-block: var(--space-2);
 				margin-inline: 0;
 

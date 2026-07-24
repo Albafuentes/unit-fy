@@ -12,6 +12,7 @@ const MenuContent = ({
 	"position-anchor": positionAnchor,
 	id,
 	placement: position = "left-end",
+	...props
 }: MenuContentProps) => {
 	return (
 		<menu
@@ -19,7 +20,8 @@ const MenuContent = ({
 			popover="auto"
 			aria-label="popover"
 			position-anchor={positionAnchor}
-			className={position}
+			className={`${props.className ?? ""} ${position}`}
+			{...props}
 		>
 			{children}
 		</menu>

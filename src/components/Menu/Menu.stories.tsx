@@ -26,24 +26,31 @@ export const Default: Story = {
 	args: {
 		children: [
 			React.createElement(Menu.Trigger, null, "Open menu"),
-			React.createElement(Menu.Content, null, "Menu content"),
-			React.createElement(Menu.Item, {
-				value: "item-1",
-				action: (value: string) => console.log(value),
-				children: "Item 1",
-			} as MenuItemProps),
-			React.createElement(Menu.Item, {
-				value: "item-2",
-				action: (value: string) => console.log(value),
-				as: "a",
-				children: "Item 2",
-			} as MenuItemProps),
-			React.createElement(Menu.Item, {
-				value: "item-3",
-				action: (value: string) => console.log(value),
-				as: "p",
-				children: "Item 3",
-			} as MenuItemProps),
+			React.createElement(Menu.Content, null, [
+				React.createElement<MenuItemProps>(
+					Menu.Item,
+					{
+						action: () => console.log("Item 1 clicked"),
+					},
+					"Item 1",
+				),
+				React.createElement(
+					Menu.Item,
+					{
+						as: "a",
+						href: "https://example.com",
+					},
+					"Item 2",
+				),
+				React.createElement(
+					Menu.Item,
+					{
+						as: "input",
+						action: () => console.log("Item 1 clicked"),
+					},
+					"Item 3",
+				),
+			]),
 		],
 	},
 };
