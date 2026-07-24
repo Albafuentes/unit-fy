@@ -1,20 +1,21 @@
 import type React from "react";
 import { Button, type ButtonProps } from "../../Button/Button";
 
-
 export type MenuItemProps<T extends React.ElementType = "p"> = {
     as?: T;
     children?: React.ReactNode;
     action?: () => void;
-} & Omit<
-    React.ComponentPropsWithoutRef<T>,
-    "as" | "children" | "action"
->;
+    withSeparator?: boolean;
+} & (T extends typeof Button
+    ? Omit<ButtonProps, "as" | "children" | "action" | "onClick">
+    : Omit<React.ComponentPropsWithoutRef<T>, "as" | "children" | "action">);
 
 export const DEFAULT_ELEMENT = "p";
 
-const MenuItem = <T extends React.ElementType = "p">(props: MenuItemProps<T>) => {
-	const { children, as, ...rest } = props;
+const MenuItem = <T extends React.ElementType = "p">(
+	props: MenuItemProps<T>,
+) => {
+	const { children, as, withSeparator, ...rest } = props;
 	const Component = as ?? "p";
 
 	const handleClick = () => {
@@ -24,17 +25,13 @@ const MenuItem = <T extends React.ElementType = "p">(props: MenuItemProps<T>) =>
 	};
 
 	if (Component === Button) {
+		    const buttonProps = rest as Omit<ButtonProps, "children" | "onClick">;
 		return (
-			<li>
+			<li
+				className={`menu-item-button ${withSeparator ? "menu-item--with-separator" : ""}`}
+			>
 				<Button
-					{...("variant" in rest && {
-						variant: rest?.variant as ButtonProps["variant"],
-					})}
-					{...("backgroundColor" in rest && {
-						backgroundColor:
-							rest?.backgroundColor as ButtonProps["backgroundColor"],
-					})}
-					{...("size" in rest && { size: rest?.size as ButtonProps["size"] })}
+					{...buttonProps}
 					onClick={handleClick}
 				>
 					{children}
@@ -43,22 +40,11 @@ const MenuItem = <T extends React.ElementType = "p">(props: MenuItemProps<T>) =>
 		);
 	}
 
-	// if (Component === "a") {
-	// 	return (
-	// 		<li>
-	// 			<a
-	// 				href={"href" in rest ? `${rest.href}` : "#"}
-	// 				{...(rest as React.ComponentProps<"a">)}
-	// 			>
-	// 				{children}
-	// 			</a>
-	// 		</li>
-	// 	);
-	// }
-
 	if (Component === "input") {
 		return (
-			<li>
+			<li
+				className={`menu-item-button ${withSeparator ? "menu-item--with-separator" : ""}`}
+			>
 				<input
 					{...(rest as React.ComponentProps<"input">)}
 					onBlur={handleClick}
@@ -68,7 +54,9 @@ const MenuItem = <T extends React.ElementType = "p">(props: MenuItemProps<T>) =>
 	}
 
 	return (
-		<li>
+		<li
+			className={`menu-item-button ${withSeparator ? "menu-item--with-separator" : ""}`}
+		>
 			<Component {...(rest as any)} onClick={handleClick}>
 				{children}
 			</Component>

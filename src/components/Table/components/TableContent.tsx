@@ -1,5 +1,11 @@
-import { IconSwitchVertical } from "@tabler/icons-react";
+import {
+	IconArrowDown,
+	IconArrowUp,
+	IconEyeOff,
+} from "@tabler/icons-react";
 import React, { useCallback, useMemo } from "react";
+import { Button } from "../../Button/Button";
+import Menu from "../..//Menu";
 import { formatCellToString } from "../helpers";
 import type { SortState } from "../hooks/use-table-controller.hook";
 import { SortDirectionEnum, type TableTypes } from "../types/table.types";
@@ -40,23 +46,40 @@ const TableContent = <T extends Record<string, any>>({
 							? "th-sortable"
 							: "",
 				},
-				column.header,
+
 				column.isSortable ? (
-					<button
-						type="button"
-						className="th-sortable-button"
-						onClick={() => {
-							sortState.action(
-								sortState.direction === SortDirectionEnum.Desc
-									? SortDirectionEnum.Asc
-									: SortDirectionEnum.Desc,
-								column.accessorKey,
-							);
-						}}
-					>
-						<IconSwitchVertical stroke={2} />
-					</button>
-				) : null,
+					<Menu.Provider>
+						<Menu.Trigger>{column.header}</Menu.Trigger>
+						<Menu.Content>
+							<Menu.Item
+								as={Button}
+								variant="secondary"
+								action={() =>
+									sortState.action(SortDirectionEnum.Asc, column.accessorKey)
+								}
+							>
+								<IconArrowUp stroke={2} />
+								Sort Ascending
+							</Menu.Item>
+							<Menu.Item
+								as={Button}
+								variant="secondary"
+								action={() =>
+									sortState.action(SortDirectionEnum.Desc, column.accessorKey)
+								}
+							>
+								<IconArrowDown stroke={2} />
+								Sort Descending
+							</Menu.Item>
+							<Menu.Item as={Button} variant="secondary" withSeparator>
+								<IconEyeOff stroke={2} />
+								Hide Column
+							</Menu.Item>
+						</Menu.Content>
+					</Menu.Provider>
+				) : (
+					column.header
+				),
 			);
 		});
 	}, [parseColumns, sortState]);

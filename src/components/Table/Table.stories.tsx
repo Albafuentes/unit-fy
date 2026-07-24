@@ -3,7 +3,7 @@ import React, { type JSX } from "react";
 import { fn } from "storybook/test";
 import { Button } from "../Button/Button";
 import Menu from "../Menu/index";
-import type { FilterProps, TableFilters } from "./components/Filter";
+import type { FilterProps } from "./components/Filter";
 
 import Table from "./index";
 
