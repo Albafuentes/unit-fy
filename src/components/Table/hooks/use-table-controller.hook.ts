@@ -1,4 +1,5 @@
-import { type JSX, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import type { TableFilters } from "../components/Filter";
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from "../config";
 import {
 	buildColumns,
@@ -14,12 +15,6 @@ export type SortState<T> = {
 	action: (direction: TableTypes.SortDirection, keyAccessor: keyof T) => void;
 };
 
-export type Filters<T> = {
-	keyAccessor: keyof T;
-	value?: unknown;
-	render: (action: (value: unknown) => void, reset: () => void) => JSX.Element;
-};
-
 export type PaginationState = {
 	currentPage: number;
 	totalPages: number;
@@ -33,7 +28,7 @@ export const useTableController = <T extends object>(
 	config: TableTypes.Column<T>[] | undefined,
 	hasPagination: boolean = false,
 	paginationProps?: Omit<PaginationState, "action" | "pageSizeAction">,
-	filters?: Filters<T>[],
+	filters?: TableFilters<T>[],
 ) => {
 	//--- Filter Functionality: un único valor activo por columna, se reemplaza
 	//--- en vez de acumularse cuando se filtra varias veces por la misma clave.

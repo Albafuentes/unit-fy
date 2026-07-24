@@ -1,11 +1,21 @@
-import React from "react";
-import type { Filters } from "../hooks/use-table-controller.hook";
+import React, { type JSX } from "react";
 
-export type FilterProps<T extends object> = {
-	filters: Filters<T>[]; //publicProp
+export type TableFilters<T> = {
+	keyAccessor: keyof T;
+	render: (action: (value: unknown) => void, reset: () => void) => JSX.Element;
+};
+
+export type PublicFilterProps<T extends object> = {
+	filters: TableFilters<T>[]; //publicProp
+};
+
+export type PrivateFilterProps<T extends object> = {
 	action?: (value: unknown, keyAccessor: keyof T) => void; // interal prop
 	reset?: (keyAccessor: keyof T) => void; // interal prop
 };
+
+export type FilterProps<T extends object> = PublicFilterProps<T> &
+	Partial<PrivateFilterProps<T>>;
 
 const Filter = <T extends object>({
 	filters,

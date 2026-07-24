@@ -3,15 +3,17 @@ import { useMemo, useState } from "react";
 import { DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_PAGE_SLICE_SIZE } from "../config";
 import type { PaginationState } from "../hooks/use-table-controller.hook";
 
-export type PublicPaginationProps = Omit<
+type PublicPaginationProps = Omit<
 	PaginationState,
 	"action" | "pageSizeAction"
 >;
 
-export type PrivatePaginationProps = Pick<
+type PrivatePaginationProps = Pick<
 	PaginationState,
 	"currentPage" | "action" | "pageSizeAction"
 >;
+
+export type PaginationProps = PublicPaginationProps & Partial<PrivatePaginationProps>;
 
 const Pagination = ({
 	currentPage,
@@ -19,7 +21,7 @@ const Pagination = ({
 	pageSize,
 	action,
 	pageSizeAction,
-}: PublicPaginationProps & Partial<PrivatePaginationProps>): React.JSX.Element => {
+}: PaginationProps): React.JSX.Element => {
 	const [start, setStart] = useState(0);
 
 	const pages = useMemo(

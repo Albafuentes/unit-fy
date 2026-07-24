@@ -2,13 +2,9 @@ import "./table.css";
 import React, { isValidElement, type JSX } from "react";
 import { Filter, Pagination, TableContent } from "./components";
 import type { FilterProps } from "./components/Filter";
-import type {
-	PrivatePaginationProps,
-	PublicPaginationProps,
-} from "./components/Pagination";
+import type { PaginationProps } from "./components/Pagination";
 import type { TableContentProps } from "./components/TableContent";
 import {
-	type Filters,
 	type PaginationState,
 	useTableController,
 } from "./hooks";
@@ -47,11 +43,7 @@ const TableProvider = <T extends Record<string, unknown>>({
 
 	const PaginationComponent = childrenArray.find(
 		(child) => isValidElement(child) && child.type === Pagination,
-	) as
-		| React.ReactElement<
-				PublicPaginationProps & Partial<PrivatePaginationProps>
-		  >
-		| undefined;
+	) as React.ReactElement<PaginationProps> | undefined;
 
 	const {
 		dataTable,
@@ -91,9 +83,7 @@ const TableProvider = <T extends Record<string, unknown>>({
 				})}
 
 			{PaginationComponent &&
-				React.cloneElement<
-					PublicPaginationProps & Partial<PrivatePaginationProps>
-				>(PaginationComponent, {
+				React.cloneElement<PaginationProps>(PaginationComponent, {
 					...PaginationComponent.props,
 					currentPage: paginationState.currentPage,
 					totalPages: paginationState.totalPages,

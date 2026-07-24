@@ -2,10 +2,9 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import React, { type JSX } from "react";
 import { fn } from "storybook/test";
 import { Button } from "../Button/Button";
-import type { MenuItemProps } from "../Menu/components/MenuItem";
 import Menu from "../Menu/index";
-import type { FilterProps } from "./components/Filter";
-import type { Filters } from "./hooks";
+import type { FilterProps, TableFilters } from "./components/Filter";
+
 import Table from "./index";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
