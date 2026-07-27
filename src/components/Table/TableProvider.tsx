@@ -49,6 +49,7 @@ const TableProvider = <T extends Record<string, unknown>>({
 		paginationState,
 		filtersState,
 		hideColumnState,
+		selectColumnState,
 	} = useTableController<T>(
 		data,
 		config,

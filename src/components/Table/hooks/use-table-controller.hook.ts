@@ -26,6 +26,11 @@ export type FiltersState<T> = {
 	reset: (keyAccessor: keyof T) => void;
 };
 
+export type SelectColumnState<T> = {
+	action: (keyAccessor: (keyof T)[]) => void;
+	reset: () => void;
+};
+
 export type PaginationState = {
 	currentPage: number;
 	totalPages: number;
@@ -169,6 +174,22 @@ export const useTableController = <T extends object>(
 		setTableConfig(config);
 	};
 
+	const actionSelectColumn = (keyAccessor: (keyof T)[]) => {
+		if (!tableConfig) {
+			return;
+		}
+		const columnConfig = tableConfig.map((column) =>
+			keyAccessor.includes(column.accessorKey)
+				? { ...column, isSelected: true }
+				: column,
+		);
+		setTableConfig(columnConfig);
+	};
+
+	const resetSelectColumn = () => {
+		setTableConfig(config);
+	};
+
 	return {
 		dataTable,
 		parseColumns,
@@ -192,6 +213,10 @@ export const useTableController = <T extends object>(
 		hideColumnState: {
 			action: actionHideColumn,
 			reset: resetHideColumn,
+		},
+		selectColumnState: {
+			action: actionSelectColumn,
+			reset: resetSelectColumn,
 		},
 	};
 };
