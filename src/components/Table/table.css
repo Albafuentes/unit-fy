@@ -1,7 +1,9 @@
 @import url("../../theme/index.css");
 
 #table-container {
-	width: fit-content;
+	width: 100%;
+	overflow-x: auto;
+
 	.table {
 		background-color: var(--color-white);
 		width: 100%;
@@ -106,6 +108,9 @@
 	}
 
 	.table-pagination {
+		position: sticky;
+		left: 0;
+
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -165,6 +170,9 @@
 		}
 	}
 	.table-filter {
+		position: sticky;
+		left: 0;
+
 		display: flex;
 		justify-content: flex-start;
 		align-items: center;

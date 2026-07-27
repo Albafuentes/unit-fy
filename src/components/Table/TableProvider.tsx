@@ -66,7 +66,7 @@ const TableProvider = <T extends Record<string, unknown>>({
 	);
 
 	return (
-		<div style={{ overflowX: "auto" }} id="table-container">
+		<div id="table-container">
 			{(hasActionColumn ||
 				FilterComponent) && (
 					<div className="table-filter">
