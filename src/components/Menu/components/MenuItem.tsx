@@ -15,14 +15,8 @@ export const DEFAULT_ELEMENT = "p";
 const MenuItem = <T extends React.ElementType = "p">(
 	props: MenuItemProps<T>,
 ) => {
-	const { children, as, withSeparator, ...rest } = props;
+	const { children, as, withSeparator, action, ...rest } = props;
 	const Component = as ?? "p";
-
-	const handleClick = () => {
-		if (props.action) {
-			props.action();
-		}
-	};
 
 	if (Component === Button) {
 		    const buttonProps = rest as Omit<ButtonProps, "children" | "onClick">;
@@ -32,7 +26,7 @@ const MenuItem = <T extends React.ElementType = "p">(
 			>
 				<Button
 					{...buttonProps}
-					onClick={handleClick}
+					onClick={action ? () => action() : undefined}
 				>
 					{children}
 				</Button>
@@ -47,7 +41,7 @@ const MenuItem = <T extends React.ElementType = "p">(
 			>
 				<input
 					{...(rest as React.ComponentProps<"input">)}
-					onBlur={handleClick}
+					onBlur={action ? () => action() : undefined}
 				/>
 			</li>
 		);
@@ -57,7 +51,7 @@ const MenuItem = <T extends React.ElementType = "p">(
 		<li
 			className={`menu-item-button ${withSeparator ? "menu-item--with-separator" : ""}`}
 		>
-			<Component {...(rest as any)} onClick={handleClick}>
+			<Component {...(rest as any)} onClick={action ? () => action() : undefined}>
 				{children}
 			</Component>
 		</li>
