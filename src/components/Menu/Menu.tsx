@@ -1,5 +1,6 @@
 import "./menu.css";
 import React, { isValidElement } from "react";
+import { v4 as uuidv4 } from "uuid";
 import type { MenuContentProps } from "./components/MenuContent";
 import MenuItem, {
 	DEFAULT_ELEMENT,
@@ -13,8 +14,7 @@ export interface MenuProviderProps {
 
 const MenuProvider = ({ children }: MenuProviderProps) => {
 	const childrenArray = React.Children.toArray(children);
-
-	const id = React.useId();
+	const id = uuidv4();
 
 	const TriggerComponent = childrenArray.find(
 		(child) => isValidElement(child) && child.type === MenuTrigger,
@@ -55,7 +55,7 @@ const MenuProvider = ({ children }: MenuProviderProps) => {
 						) : (
 							ItemsComponent.map((item) => (
 								<MenuItem
-									key={`menu-item-${id}`}
+									key={`menu-item-${id}-${uuidv4()}`}
 									{...("action" in item.props &&
 										item.props?.action !== undefined && {
 											action: item.props.action,
