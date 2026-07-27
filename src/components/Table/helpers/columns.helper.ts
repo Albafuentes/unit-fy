@@ -47,8 +47,12 @@ export const buildColumns = <T extends object>(
 				const column: TableTypes.Column<T> = {
 					header: columnConfig.header ?? (columnConfig.accessorKey as string),
 					accessorKey: columnConfig.accessorKey,
-					isSortable: columnConfig.isSortable,
-					align: columnConfig.align,
+					...(columnConfig.isSortable !== undefined
+						? { isSortable: columnConfig.isSortable }
+						: {}),
+					...(columnConfig.align !== undefined
+						? { align: columnConfig.align }
+						: {}),
 					...(columnConfig.colSpan !== undefined
 						? { colSpan: columnConfig.colSpan }
 						: {}),
@@ -71,12 +75,12 @@ export const buildColumns = <T extends object>(
 		const missingKeys = allDataKeys.filter((key) => !configKeys.has(key));
 
 		// Add default columns for keys not in config
-		const defaultColumns: TableTypes.Column<T>[] = missingKeys.map(
-			(key: keyof T) => ({
+		const defaultColumns: TableTypes.Column<T>[] = missingKeys
+			.filter((key) => key !== "internalId")
+			.map((key: keyof T) => ({
 				header: key as string,
 				accessorKey: key,
-			}),
-		);
+			}));
 		// Combine config columns (with their order) and default columns
 		return [...configColumns, ...defaultColumns];
 	}

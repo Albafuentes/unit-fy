@@ -1,8 +1,6 @@
 import {
 	IconArrowDown,
 	IconArrowUp,
-	IconColumnInsertRight,
-	IconDotsVertical,
 	IconEyeOff,
 	IconSelector,
 } from "@tabler/icons-react";
@@ -13,6 +11,7 @@ import Menu from "../..//Menu";
 import { formatCellToString } from "../helpers";
 import type {
 	HideColumnState,
+	SelectColumnState,
 	SortState,
 } from "../hooks/use-table-controller.hook";
 import { SortDirectionEnum, type TableTypes } from "../types/table.types";
@@ -24,6 +23,7 @@ export interface TableContentProps<T extends object> {
 	config?: TableTypes.Column<T>[] | undefined;
 	dataTable: T[];
 	hideColumnState: HideColumnState<T>;
+	selectColumnState: SelectColumnState<T>;
 	onRowClick?: (_data: T, _rowIndex: number) => void;
 	rowIsDisabled?: (_data: T, _rowIndex: number) => boolean;
 	rowStyle?: (
@@ -32,49 +32,13 @@ export interface TableContentProps<T extends object> {
 	) => React.HTMLAttributes<HTMLTableRowElement>;
 }
 
-const columnAction = <T extends object>(
-	hideColumnState: HideColumnState<T>,
-	isHeadTable: boolean = false,
-) => {
-	return isHeadTable
-		? React.createElement(
-				"th",
-				{
-					key: "table-head-action-cell",
-					scope: "col",
-					id: uuidv4(),
-				},
-				<Menu.Provider>
-					<Menu.Trigger variant="link" className="th-sortable_trigger">
-						<IconDotsVertical stroke={2} size={18} />
-					</Menu.Trigger>
-					<Menu.Content size="sm">
-						<Menu.Item
-							as={Button}
-							variant="link"
-							action={hideColumnState.reset}
-						>
-							<IconColumnInsertRight stroke={2} size={18} />
-							Show All Columns
-						</Menu.Item>
-					</Menu.Content>
-				</Menu.Provider>,
-			)
-		: React.createElement(
-				"td",
-				{
-					key: "table-body-action-cell ",
-				},
-				null,
-			);
-};
-
 const TableContent = <T extends Record<string, any>>({
 	dataTable,
 	parseColumns,
 	config,
 	sortState,
 	hideColumnState,
+	selectColumnState,
 	onRowClick,
 	rowIsDisabled,
 	rowStyle,
@@ -83,15 +47,22 @@ const TableContent = <T extends Record<string, any>>({
 		return config?.some((column) => column.isSortable) ?? false;
 	}, [config]);
 
+	const allRowIds = dataTable?.map((row) => row.id);
+	const allRowIdsAreChecked = allRowIds.every((id) =>
+		selectColumnState.selectedRows.includes(id),
+	);
+
+	const id = uuidv4();
+
 	const headerColumns = useMemo(() => {
 		return parseColumns.map((column: TableTypes.Column<T>) => {
 			return React.createElement(
 				"th",
 				{
-					key: `table-head-cell-${String(column.accessorKey)}`,
+					key: `table-head-cell-${id}-${String(column.accessorKey)}`,
 					scope: "col",
 					colSpan: column.colSpan || undefined,
-					id: uuidv4(),
+					id: `table-head-cell-${id}-${String(column.accessorKey)}`,
 					className: column.divideY
 						? "th-divisable"
 						: column.isSortable
@@ -129,7 +100,9 @@ const TableContent = <T extends Record<string, any>>({
 								as={Button}
 								variant="link"
 								withSeparator
-								action={() => hideColumnState.action([column.accessorKey])}
+								action={() =>
+									hideColumnState.action([column.accessorKey], false)
+								}
 							>
 								<IconEyeOff stroke={2} size={18} />
 								Hide Column
@@ -141,18 +114,57 @@ const TableContent = <T extends Record<string, any>>({
 				),
 			);
 		});
-	}, [parseColumns, sortState, hideColumnState]);
+	}, [parseColumns, sortState, hideColumnState, id]);
 
-	const mapperColumn = useCallback(
+	const headerRows = useMemo(() => {
+		return React.createElement(
+			"tr",
+			{
+				key: `table-head-row-${id}`,
+				id: `table-head-row-${id}`,
+			},
+			hasActionColumn
+				? React.createElement(
+						"th",
+						{
+							scope: "col",
+							id: `table-head-action-cell-${id}`,
+						},
+						<input
+							type="checkbox"
+							checked={allRowIdsAreChecked}
+							onClick={() =>
+								allRowIdsAreChecked
+									? selectColumnState.reset()
+									: selectColumnState.action(allRowIds)
+							}
+							onChange={() => {}}
+						/>,
+					)
+				: null,
+			headerColumns,
+		);
+	}, [
+		headerColumns,
+		selectColumnState,
+		allRowIdsAreChecked,
+		allRowIds,
+		hasActionColumn,
+		id,
+	]);
+
+	const bodyColumns = useCallback(
 		(rowIndex: number) => {
 			const rowData = dataTable[rowIndex];
 			const rowRecord = rowData as Record<string, unknown> | undefined;
+
 			return parseColumns.map(
 				(column: TableTypes.Column<T>, colIndex: number) =>
 					React.createElement(
 						"td",
 						{
-							key: `table-body-cell-${String(column.accessorKey)} `,
+							key: `table-body-cell-${rowData.internalId}-${String(column.accessorKey)}`,
+							id: `table-body-cell-${rowData.internalId}-${String(column.accessorKey)}`,
 							colSpan: column.colSpan || undefined,
 							...(column.minWidth || column.maxWidth || column.align
 								? {
@@ -184,46 +196,59 @@ const TableContent = <T extends Record<string, any>>({
 				: false;
 			const haveOnclick = Boolean(onRowClick) && !isDisabled;
 
+			const isSelected = selectColumnState.selectedRows.includes(
+				rowData.internalId,
+			);
+
 			return React.createElement(
 				"tr",
 				{
-					key: `table-body-row-${rowIndex}`,
+					key: `table-body-row-${rowData.internalId}`,
+					id: `table-body-row-${rowData.internalId}`,
 					onClick: () => {
 						if (haveOnclick && onRowClick && !isDisabled) {
 							onRowClick(rowData, rowIndex);
 						}
 					},
-					className: isDisabled
-						? "tr-disabled"
-						: haveOnclick
-							? "tr-clickeable"
-							: "",
+					className: isSelected
+						? "tr-selected"
+						: isDisabled
+							? "tr-disabled"
+							: haveOnclick
+								? "tr-clickeable"
+								: "",
 					...(rowStyle ? rowStyle(rowData, rowIndex) : {}),
 				},
-				<>
-					{hasActionColumn && columnAction<T>(hideColumnState, false)}
-					{mapperColumn(rowIndex)}
-				</>,
+
+				hasActionColumn
+					? React.createElement(
+							"td",
+							{ id: `table-body-action-cell-${rowData.internalId}` },
+							<input
+								type="checkbox"
+								checked={isSelected}
+								onClick={() => selectColumnState.action([rowData.internalId])}
+								onChange={() => {}}
+							/>,
+						)
+					: null,
+
+				bodyColumns(rowIndex),
 			);
 		});
 	}, [
 		dataTable,
 		rowIsDisabled,
 		onRowClick,
-		mapperColumn,
+		bodyColumns,
 		rowStyle,
+		selectColumnState,
 		hasActionColumn,
-		hideColumnState,
 	]);
 
 	return (
 		<table className="table" data-testid="table">
-			<thead>
-				<tr>
-					{hasActionColumn && columnAction<T>(hideColumnState, true)}
-					{headerColumns}
-				</tr>
-			</thead>
+			<thead>{headerRows}</thead>
 			{dataTable.length === 0 ? (
 				<EmptyState colSpan={parseColumns.length} />
 			) : (

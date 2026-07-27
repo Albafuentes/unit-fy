@@ -1,7 +1,8 @@
 import "./table.css";
-import React, { isValidElement, type JSX } from "react";
+import React, { isValidElement, type JSX, useMemo } from "react";
 import { Filter, Pagination, TableContent } from "./components";
 import type { FilterProps } from "./components/Filter";
+import HideColumns, { type HideColumnProps } from "./components/HideColumn";
 import type { PaginationProps } from "./components/Pagination";
 import type { TableContentProps } from "./components/TableContent";
 import { type PaginationState, useTableController } from "./hooks";
@@ -27,6 +28,10 @@ const TableProvider = <T extends Record<string, unknown>>({
 	rowStyle,
 	children,
 }: TableProviderProps<T>): React.JSX.Element => {
+	const hasActionColumn = useMemo(() => {
+		return config?.some((column) => column.isSortable) ?? false;
+	}, [config]);
+
 	// Extraer los sub-componentes de los children con tipado correcto
 	const childrenArray = React.Children.toArray(children);
 
@@ -59,14 +64,25 @@ const TableProvider = <T extends Record<string, unknown>>({
 			: undefined,
 		FilterComponent?.props.filters,
 	);
-console.log(parseColumns)
+
 	return (
 		<div style={{ overflowX: "auto" }} id="table-container">
-			{FilterComponent &&
-				React.cloneElement<FilterProps<T>>(FilterComponent, {
-					...FilterComponent.props,
-					...filtersState,
-				})}
+			{(hasActionColumn ||
+				FilterComponent) && (
+					<div className="table-filter">
+						{hasActionColumn &&
+							React.createElement<HideColumnProps<T>>(HideColumns, {
+								hideColumnState,
+								config,
+								parseColumns
+							})}
+						{FilterComponent &&
+							React.cloneElement<FilterProps<T>>(FilterComponent, {
+								...FilterComponent.props,
+								...filtersState,
+							})}
+					</div>
+				)}
 
 			{TableComponent &&
 				React.cloneElement<TableContentProps<T>>(TableComponent, {
@@ -76,6 +92,7 @@ console.log(parseColumns)
 					config,
 					sortState,
 					hideColumnState,
+					selectColumnState,
 					onRowClick,
 					rowIsDisabled,
 					rowStyle,

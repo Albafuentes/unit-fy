@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import type { TableFilters } from "../components/Filter";
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from "../config";
 import {
@@ -16,7 +17,7 @@ export type SortState<T> = {
 };
 
 export type HideColumnState<T> = {
-	action: (keyAccessor: (keyof T)[]) => void;
+	action: (keyAccessor: (keyof T)[], isVisible: boolean) => void;
 	reset: () => void;
 };
 
@@ -27,6 +28,7 @@ export type FiltersState<T> = {
 };
 
 export type SelectColumnState<T> = {
+	selectedRows: string[];
 	action: (keyAccessor: (keyof T)[]) => void;
 	reset: () => void;
 };
@@ -46,6 +48,15 @@ export const useTableController = <T extends object>(
 	paginationProps?: Omit<PaginationState, "action" | "pageSizeAction">,
 	filters?: TableFilters<T>[],
 ) => {
+	const dataWithId = useMemo(
+		() =>
+			data.map((row) => ({
+				...row,
+				internalId: "internalId" in row ? row.internalId : uuidv4(),
+			})),
+		[data],
+	);
+
 	// --- Config State
 	const [tableConfig, setTableConfig] = useState<
 		TableTypes.Column<T>[] | undefined
@@ -69,16 +80,18 @@ export const useTableController = <T extends object>(
 		paginationProps?.pageSize ?? DEFAULT_PAGE_SIZE,
 	);
 
-	//--- Pipeline derivado: data -> filtrado -> ordenado -> paginado.
+	const [selectedRows, setSelectedRows] = useState<string[]>([]);
+
+	//--- Pipeline derivado: dataWithId -> filtrado -> ordenado -> paginado.
 	//--- Cada etapa se recalcula a partir de la anterior, así el filtro y el orden siempre actúan sobre el dataset completo (no sobre una página  ya recortada) y la paginación respeta filtros y orden activos.
 
 	const filteredResult = useMemo(() => {
 		const entries = Object.entries(activeFilters) as [keyof T, string][];
 		return entries.reduce(
 			(acc, [keyAccessor, value]) => filteredData(acc, keyAccessor, value),
-			data,
+			dataWithId,
 		);
-	}, [data, activeFilters]);
+	}, [dataWithId, activeFilters]);
 
 	const sortedResult = useMemo(() => {
 		if (!sort.direction || sort.keyAccessor === null) {
@@ -158,36 +171,49 @@ export const useTableController = <T extends object>(
 		setCurrentPage(DEFAULT_PAGE_NUMBER);
 	};
 
-	const actionHideColumn = (keyAccessor: (keyof T)[]) => {
+	const actionHideColumn = (keyAccessor: (keyof T)[], isVisible: boolean) => {
 		if (!tableConfig) {
 			return;
 		}
 		const columnConfig = tableConfig.map((column) =>
 			keyAccessor.includes(column.accessorKey)
-				? { ...column, isVisible: false }
+				? { ...column, isVisible: isVisible }
 				: column,
 		);
 		setTableConfig(columnConfig);
 	};
 
 	const resetHideColumn = () => {
-		setTableConfig(config);
+		setTableConfig((prev) =>
+			prev?.map((column) => ({
+				...column,
+				isVisible:
+					config?.find((c) => c.accessorKey === column.accessorKey)
+						?.isVisible ?? true,
+			})),
+		);
 	};
 
-	const actionSelectColumn = (keyAccessor: (keyof T)[]) => {
+	const actionSelectRow = (rowIds: string[]) => {
 		if (!tableConfig) {
 			return;
 		}
-		const columnConfig = tableConfig.map((column) =>
-			keyAccessor.includes(column.accessorKey)
-				? { ...column, isSelected: true }
-				: column,
+
+		const rowIsPreviouslySelected = rowIds.some((id) =>
+			selectedRows.includes(id),
 		);
-		setTableConfig(columnConfig);
+
+		setSelectedRows((prevSelectedRows) => {
+			const updatedSelectedRows = rowIsPreviouslySelected
+				? prevSelectedRows.filter((id) => !rowIds.includes(id))
+				: [...prevSelectedRows, ...rowIds];
+
+			return Array.from(new Set(updatedSelectedRows));
+		});
 	};
 
 	const resetSelectColumn = () => {
-		setTableConfig(config);
+		setSelectedRows([]);
 	};
 
 	return {
@@ -213,10 +239,11 @@ export const useTableController = <T extends object>(
 		hideColumnState: {
 			action: actionHideColumn,
 			reset: resetHideColumn,
-		},
+		} as HideColumnState<T>,
 		selectColumnState: {
-			action: actionSelectColumn,
+			selectedRows,
+			action: actionSelectRow,
 			reset: resetSelectColumn,
-		},
+		} as SelectColumnState<T>,
 	};
 };

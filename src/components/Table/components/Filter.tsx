@@ -19,22 +19,18 @@ const Filter = <T extends object>({
 	action,
 	reset,
 }: FilterProps<T>) => {
-	return (
-		<div className="table-filter">
-			{filters.map((filter) => (
-				<React.Fragment key={String(filter.keyAccessor)}>
-					{filter.render(
-						(value: unknown) => {
-							action?.(value, filter.keyAccessor);
-						},
-						() => {
-							reset?.(filter.keyAccessor);
-						},
-					)}
-				</React.Fragment>
-			))}
-		</div>
-	);
+	return filters.map((filter) => (
+		<React.Fragment key={String(filter.keyAccessor)}>
+			{filter.render(
+				(value: unknown) => {
+					action?.(value, filter.keyAccessor);
+				},
+				() => {
+					reset?.(filter.keyAccessor);
+				},
+			)}
+		</React.Fragment>
+	));
 };
 Filter.displayName = "Table.Filter";
 export default Filter;

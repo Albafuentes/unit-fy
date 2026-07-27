@@ -173,7 +173,8 @@ const filterChildren = (
 					<input
 						id="input"
 						value={value}
-						onChange={(e) => setValue(e.target.value)}
+						onBlur={(e) => setValue(e.target.value)}
+						onChange={() => {}}
 						style={{ width: "100%" }}
 					/>
 					<div style={{ display: "flex", gap: "8px" }}>

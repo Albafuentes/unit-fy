@@ -55,6 +55,12 @@
 					opacity: 0.5;
 					background-color: var(--color-gray_100);
 				}
+				&.tr-selected {
+					background-color: var(--color-blue_50);
+					&:hover {
+						background-color: var(--color-blue_100);
+					}
+				}
 			}
 		}
 
