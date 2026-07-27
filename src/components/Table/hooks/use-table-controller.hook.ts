@@ -15,6 +15,17 @@ export type SortState<T> = {
 	action: (direction: TableTypes.SortDirection, keyAccessor: keyof T) => void;
 };
 
+export type HideColumnState<T> = {
+	action: (keyAccessor: (keyof T)[]) => void;
+	reset: () => void;
+};
+
+export type FiltersState<T> = {
+	activeFilters: Partial<Record<keyof T, string>>;
+	action: (value: unknown, keyAccessor: keyof T) => void;
+	reset: (keyAccessor: keyof T) => void;
+};
+
 export type PaginationState = {
 	currentPage: number;
 	totalPages: number;
@@ -30,8 +41,11 @@ export const useTableController = <T extends object>(
 	paginationProps?: Omit<PaginationState, "action" | "pageSizeAction">,
 	filters?: TableFilters<T>[],
 ) => {
-	//--- Filter Functionality: un único valor activo por columna, se reemplaza
-	//--- en vez de acumularse cuando se filtra varias veces por la misma clave.
+	// --- Config State
+	const [tableConfig, setTableConfig] = useState<
+		TableTypes.Column<T>[] | undefined
+	>(config);
+	//--- Filter Functionality
 	const [activeFilters, setActiveFilters] = useState<
 		Partial<Record<keyof T, string>>
 	>({});
@@ -51,9 +65,7 @@ export const useTableController = <T extends object>(
 	);
 
 	//--- Pipeline derivado: data -> filtrado -> ordenado -> paginado.
-	//--- Cada etapa se recalcula a partir de la anterior, así el filtro y el
-	//--- orden siempre actúan sobre el dataset completo (no sobre una página
-	//--- ya recortada) y la paginación respeta filtros y orden activos.
+	//--- Cada etapa se recalcula a partir de la anterior, así el filtro y el orden siempre actúan sobre el dataset completo (no sobre una página  ya recortada) y la paginación respeta filtros y orden activos.
 
 	const filteredResult = useMemo(() => {
 		const entries = Object.entries(activeFilters) as [keyof T, string][];
@@ -87,8 +99,8 @@ export const useTableController = <T extends object>(
 	}, [sortedResult, hasPagination, currentPage, pageSize]);
 
 	const parseColumns = useMemo(
-		() => buildColumns<T>(dataTable, config),
-		[dataTable, config],
+		() => buildColumns<T>(dataTable, tableConfig),
+		[dataTable, tableConfig],
 	);
 
 	//--- Actions
@@ -141,6 +153,22 @@ export const useTableController = <T extends object>(
 		setCurrentPage(DEFAULT_PAGE_NUMBER);
 	};
 
+	const actionHideColumn = (keyAccessor: (keyof T)[]) => {
+		if (!tableConfig) {
+			return;
+		}
+		const columnConfig = tableConfig.map((column) =>
+			keyAccessor.includes(column.accessorKey)
+				? { ...column, isVisible: false }
+				: column,
+		);
+		setTableConfig(columnConfig);
+	};
+
+	const resetHideColumn = () => {
+		setTableConfig(config);
+	};
+
 	return {
 		dataTable,
 		parseColumns,
@@ -149,8 +177,6 @@ export const useTableController = <T extends object>(
 			direction: sort.direction,
 			action: actionSort,
 		} as SortState<T>,
-		actionFilter,
-		resetFilters,
 		paginationState: {
 			currentPage,
 			totalPages,
@@ -158,5 +184,14 @@ export const useTableController = <T extends object>(
 			action: actionPagination,
 			pageSizeAction,
 		} as PaginationState,
+		filtersState: {
+			activeFilters,
+			action: actionFilter,
+			reset: resetFilters,
+		},
+		hideColumnState: {
+			action: actionHideColumn,
+			reset: resetHideColumn,
+		},
 	};
 };

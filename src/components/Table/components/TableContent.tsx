@@ -1,21 +1,29 @@
 import {
 	IconArrowDown,
 	IconArrowUp,
+	IconColumnInsertRight,
+	IconDotsVertical,
 	IconEyeOff,
 	IconSelector,
 } from "@tabler/icons-react";
 import React, { useCallback, useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { Button } from "../../Button/Button";
 import Menu from "../..//Menu";
 import { formatCellToString } from "../helpers";
-import type { SortState } from "../hooks/use-table-controller.hook";
+import type {
+	HideColumnState,
+	SortState,
+} from "../hooks/use-table-controller.hook";
 import { SortDirectionEnum, type TableTypes } from "../types/table.types";
 import EmptyState from "./EmptyState";
 
 export interface TableContentProps<T extends object> {
 	parseColumns: TableTypes.Column<T>[];
 	sortState: SortState<T>;
+	config?: TableTypes.Column<T>[] | undefined;
 	dataTable: T[];
+	hideColumnState: HideColumnState<T>;
 	onRowClick?: (_data: T, _rowIndex: number) => void;
 	rowIsDisabled?: (_data: T, _rowIndex: number) => boolean;
 	rowStyle?: (
@@ -24,14 +32,57 @@ export interface TableContentProps<T extends object> {
 	) => React.HTMLAttributes<HTMLTableRowElement>;
 }
 
+const columnAction = <T extends object>(
+	hideColumnState: HideColumnState<T>,
+	isHeadTable: boolean = false,
+) => {
+	return isHeadTable
+		? React.createElement(
+				"th",
+				{
+					key: "table-head-action-cell",
+					scope: "col",
+					id: uuidv4(),
+				},
+				<Menu.Provider>
+					<Menu.Trigger variant="link" className="th-sortable_trigger">
+						<IconDotsVertical stroke={2} size={18} />
+					</Menu.Trigger>
+					<Menu.Content size="sm">
+						<Menu.Item
+							as={Button}
+							variant="link"
+							action={hideColumnState.reset}
+						>
+							<IconColumnInsertRight stroke={2} size={18} />
+							Show All Columns
+						</Menu.Item>
+					</Menu.Content>
+				</Menu.Provider>,
+			)
+		: React.createElement(
+				"td",
+				{
+					key: "table-body-action-cell ",
+				},
+				null,
+			);
+};
+
 const TableContent = <T extends Record<string, any>>({
 	dataTable,
 	parseColumns,
+	config,
 	sortState,
+	hideColumnState,
 	onRowClick,
 	rowIsDisabled,
 	rowStyle,
 }: TableContentProps<T>): React.JSX.Element => {
+	const hasActionColumn = useMemo(() => {
+		return config?.some((column) => column.isSortable) ?? false;
+	}, [config]);
+
 	const headerColumns = useMemo(() => {
 		return parseColumns.map((column: TableTypes.Column<T>) => {
 			return React.createElement(
@@ -40,17 +91,19 @@ const TableContent = <T extends Record<string, any>>({
 					key: `table-head-cell-${String(column.accessorKey)}`,
 					scope: "col",
 					colSpan: column.colSpan || undefined,
-					id: crypto.randomUUID(),
+					id: uuidv4(),
 					className: column.divideY
 						? "th-divisable"
 						: column.isSortable
 							? "th-sortable"
 							: "",
 				},
-
 				column.isSortable ? (
 					<Menu.Provider>
-						<Menu.Trigger variant="link" className="th-sortable_trigger">{column.header}<IconSelector stroke={2} size={18}/></Menu.Trigger>
+						<Menu.Trigger variant="link" className="th-sortable_trigger">
+							{column.header}
+							<IconSelector stroke={2} size={18} />
+						</Menu.Trigger>
 						<Menu.Content size="sm">
 							<Menu.Item
 								as={Button}
@@ -59,7 +112,7 @@ const TableContent = <T extends Record<string, any>>({
 									sortState.action(SortDirectionEnum.Asc, column.accessorKey)
 								}
 							>
-								<IconArrowUp stroke={2}  size={18}/>
+								<IconArrowUp stroke={2} size={18} />
 								Sort Ascending
 							</Menu.Item>
 							<Menu.Item
@@ -69,11 +122,16 @@ const TableContent = <T extends Record<string, any>>({
 									sortState.action(SortDirectionEnum.Desc, column.accessorKey)
 								}
 							>
-								<IconArrowDown stroke={2}  size={18}/>
+								<IconArrowDown stroke={2} size={18} />
 								Sort Descending
 							</Menu.Item>
-							<Menu.Item as={Button} variant="link" withSeparator>
-								<IconEyeOff stroke={2}  size={18}/>
+							<Menu.Item
+								as={Button}
+								variant="link"
+								withSeparator
+								action={() => hideColumnState.action([column.accessorKey])}
+							>
+								<IconEyeOff stroke={2} size={18} />
 								Hide Column
 							</Menu.Item>
 						</Menu.Content>
@@ -83,7 +141,7 @@ const TableContent = <T extends Record<string, any>>({
 				),
 			);
 		});
-	}, [parseColumns, sortState]);
+	}, [parseColumns, sortState, hideColumnState]);
 
 	const mapperColumn = useCallback(
 		(rowIndex: number) => {
@@ -142,15 +200,29 @@ const TableContent = <T extends Record<string, any>>({
 							: "",
 					...(rowStyle ? rowStyle(rowData, rowIndex) : {}),
 				},
-				mapperColumn(rowIndex),
+				<>
+					{hasActionColumn && columnAction<T>(hideColumnState, false)}
+					{mapperColumn(rowIndex)}
+				</>,
 			);
 		});
-	}, [dataTable, rowIsDisabled, onRowClick, mapperColumn, rowStyle]);
+	}, [
+		dataTable,
+		rowIsDisabled,
+		onRowClick,
+		mapperColumn,
+		rowStyle,
+		hasActionColumn,
+		hideColumnState,
+	]);
 
 	return (
 		<table className="table" data-testid="table">
 			<thead>
-				<tr>{headerColumns}</tr>
+				<tr>
+					{hasActionColumn && columnAction<T>(hideColumnState, true)}
+					{headerColumns}
+				</tr>
 			</thead>
 			{dataTable.length === 0 ? (
 				<EmptyState colSpan={parseColumns.length} />

@@ -4,10 +4,7 @@ import { Filter, Pagination, TableContent } from "./components";
 import type { FilterProps } from "./components/Filter";
 import type { PaginationProps } from "./components/Pagination";
 import type { TableContentProps } from "./components/TableContent";
-import {
-	type PaginationState,
-	useTableController,
-} from "./hooks";
+import { type PaginationState, useTableController } from "./hooks";
 import type { TableTypes } from "./types/table.types";
 
 export interface TableProviderProps<T extends object> {
@@ -50,8 +47,8 @@ const TableProvider = <T extends Record<string, unknown>>({
 		parseColumns,
 		sortState,
 		paginationState,
-		actionFilter,
-		resetFilters,
+		filtersState,
+		hideColumnState,
 	} = useTableController<T>(
 		data,
 		config,
@@ -61,14 +58,13 @@ const TableProvider = <T extends Record<string, unknown>>({
 			: undefined,
 		FilterComponent?.props.filters,
 	);
-
+console.log(parseColumns)
 	return (
 		<div style={{ overflowX: "auto" }} id="table-container">
 			{FilterComponent &&
 				React.cloneElement<FilterProps<T>>(FilterComponent, {
 					...FilterComponent.props,
-					action: actionFilter,
-					reset: resetFilters,
+					...filtersState,
 				})}
 
 			{TableComponent &&
@@ -76,7 +72,9 @@ const TableProvider = <T extends Record<string, unknown>>({
 					...TableComponent.props,
 					dataTable,
 					parseColumns,
+					config,
 					sortState,
+					hideColumnState,
 					onRowClick,
 					rowIsDisabled,
 					rowStyle,

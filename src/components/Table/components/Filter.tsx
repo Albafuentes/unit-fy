@@ -9,13 +9,10 @@ export type PublicFilterProps<T extends object> = {
 	filters: TableFilters<T>[]; //publicProp
 };
 
-export type PrivateFilterProps<T extends object> = {
-	action?: (value: unknown, keyAccessor: keyof T) => void; // interal prop
-	reset?: (keyAccessor: keyof T) => void; // interal prop
-};
+import type { FiltersState } from "../hooks/use-table-controller.hook";
 
 export type FilterProps<T extends object> = PublicFilterProps<T> &
-	Partial<PrivateFilterProps<T>>;
+	Partial<FiltersState<T>>; //internalProp
 
 const Filter = <T extends object>({
 	filters,

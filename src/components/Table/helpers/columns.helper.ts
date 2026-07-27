@@ -10,7 +10,7 @@ export const buildColumns = <T extends object>(
 		return !config
 			? ([{ header: "", accessorKey: "" }] as TableTypes.Column<T>[])
 			: (config
-					.filter((columnConfig) => !columnConfig.isVisible)
+					.filter((columnConfig) => columnConfig.isVisible !== false)
 					.map((columnConfig) => ({
 						header: columnConfig.header ?? (columnConfig.accessorKey as string),
 						accessorKey: columnConfig.accessorKey as string,
@@ -20,11 +20,13 @@ export const buildColumns = <T extends object>(
 
 	// If config is provided, use it to define columns and add missing ones
 	if (config && config.length > 0) {
-		const configKeys = new Set(config.map((columnConfig) => columnConfig.accessorKey));
+		const configKeys = new Set(
+			config.map((columnConfig) => columnConfig.accessorKey),
+		);
 
 		// Get columns from config (excluding hidden ones)
 		const configColumns: TableTypes.Column<T>[] = config
-			.filter((columnConfig) => !columnConfig.isVisible)
+			.filter((columnConfig) => columnConfig.isVisible !== false)
 			.map((columnConfig) => {
 				// Determine render function: use explicit render if provided, otherwise use renderType
 				let renderFunction:
