@@ -22,7 +22,7 @@ const MenuItem = <T extends React.ElementType = "p">(
 		    const buttonProps = rest as Omit<ButtonProps, "children" | "onClick">;
 		return (
 			<li
-				className={`menu-item-button ${withSeparator ? "menu-item--with-separator" : ""}`}
+				className={`${withSeparator ? "menu-item--with-separator" : ""}`}
 			>
 				<Button
 					{...buttonProps}
@@ -37,19 +37,23 @@ const MenuItem = <T extends React.ElementType = "p">(
 	if (Component === "input") {
 		return (
 			<li
-				className={`menu-item-button ${withSeparator ? "menu-item--with-separator" : ""}`}
+				className={`${withSeparator ? "menu-item--with-separator" : ""}`}
 			>
+				<label>
 				<input
 					{...(rest as React.ComponentProps<"input">)}
+					onChange={() => {}}
 					onBlur={action ? () => action() : undefined}
 				/>
+				{children ?? ""}
+				</label>
 			</li>
 		);
 	}
 
 	return (
 		<li
-			className={`menu-item-button ${withSeparator ? "menu-item--with-separator" : ""}`}
+			className={`${withSeparator ? "menu-item--with-separator" : ""}`}
 		>
 			<Component {...(rest as any)} onClick={action ? () => action() : undefined}>
 				{children}
