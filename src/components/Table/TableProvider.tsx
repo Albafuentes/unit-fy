@@ -29,7 +29,7 @@ const TableProvider = <T extends Record<string, unknown>>({
 	children,
 }: TableProviderProps<T>): React.JSX.Element => {
 	const hasActionColumn = useMemo(() => {
-		return config?.some((column) => column.isSortable) ?? false;
+		return config?.some((column) => column.isHidable) ?? false;
 	}, [config]);
 
 	// Extraer los sub-componentes de los children con tipado correcto
@@ -67,22 +67,21 @@ const TableProvider = <T extends Record<string, unknown>>({
 
 	return (
 		<div id="table-container">
-			{(hasActionColumn ||
-				FilterComponent) && (
-					<div className="table-filter">
-						{hasActionColumn &&
-							React.createElement<HideColumnProps<T>>(HideColumns, {
-								hideColumnState,
-								config,
-								parseColumns
-							})}
-						{FilterComponent &&
-							React.cloneElement<FilterProps<T>>(FilterComponent, {
-								...FilterComponent.props,
-								...filtersState,
-							})}
-					</div>
-				)}
+			{(hasActionColumn || FilterComponent) && (
+				<div className="table-filter">
+					{hasActionColumn &&
+						React.createElement<HideColumnProps<T>>(HideColumns, {
+							hideColumnState,
+							config,
+							parseColumns,
+						})}
+					{FilterComponent &&
+						React.cloneElement<FilterProps<T>>(FilterComponent, {
+							...FilterComponent.props,
+							...filtersState,
+						})}
+				</div>
+			)}
 
 			{TableComponent &&
 				React.cloneElement<TableContentProps<T>>(TableComponent, {

@@ -7,6 +7,7 @@ import Menu from "../Menu/index";
 import type { FilterProps, TableFilters } from "./components/Filter";
 import type { FiltersState } from "./hooks/use-table-controller.hook";
 import Table from "./index";
+import type { TableTypes } from "./types/table.types";
 
 type DataType = {
 	rawString: string;
@@ -27,7 +28,7 @@ type DataType = {
 	colCustom: string;
 };
 
-const DATA = Array.from({ length: 80 }).map((_, index) => ({
+const DATA: DataType[] = Array.from({ length: 80 }).map((_, index) => ({
 	rawString: uuidv4(),
 	rawNumber: Number((Math.random() * 100).toFixed(2)),
 	rawEmpty: "",
@@ -48,7 +49,7 @@ const DATA = Array.from({ length: 80 }).map((_, index) => ({
 
 const CONFIG = [
 	{ accessorKey: "rawString", isSortable: true },
-	{ accessorKey: "rawNumber" },
+	{ accessorKey: "rawNumber", isHidable: true, isSortable: true },
 	{ accessorKey: "rawEmpty", header: "Vacío → -" },
 	{ accessorKey: "rawNull", header: "Null → -" },
 	{ accessorKey: "rawObject" },
@@ -91,7 +92,7 @@ const CONFIG = [
 		cell: (value: unknown) =>
 			React.createElement("strong", null, String(value)),
 	},
-];
+] satisfies TableTypes.Column<DataType>[];
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {

@@ -44,7 +44,7 @@ const TableContent = <T extends Record<string, any>>({
 	rowStyle,
 }: TableContentProps<T>): React.JSX.Element => {
 	const hasActionColumn = useMemo(() => {
-		return config?.some((column) => column.isSortable) ?? false;
+		return config?.some((column) => column.isHidable) ?? false;
 	}, [config]);
 
 	const allRowIds = dataTable?.map((row) => row.id);
@@ -69,44 +69,51 @@ const TableContent = <T extends Record<string, any>>({
 							? "th-sortable"
 							: "",
 				},
-				column.isSortable ? (
+				column.isSortable || column.isHidable ? (
 					<Menu.Provider>
 						<Menu.Trigger variant="link" className="th-sortable_trigger">
 							{column.header}
 							<IconSelector stroke={2} size={18} />
 						</Menu.Trigger>
 						<Menu.Content size="sm">
-							<Menu.Item
-								as={Button}
-								variant="link"
-								action={() =>
-									sortState.action(SortDirectionEnum.Asc, column.accessorKey)
-								}
-							>
-								<IconArrowUp stroke={2} size={18} />
-								Sort Ascending
-							</Menu.Item>
-							<Menu.Item
-								as={Button}
-								variant="link"
-								action={() =>
-									sortState.action(SortDirectionEnum.Desc, column.accessorKey)
-								}
-							>
-								<IconArrowDown stroke={2} size={18} />
-								Sort Descending
-							</Menu.Item>
-							<Menu.Item
-								as={Button}
-								variant="link"
-								withSeparator
-								action={() =>
-									hideColumnState.action([column.accessorKey], false)
-								}
-							>
-								<IconEyeOff stroke={2} size={18} />
-								Hide Column
-							</Menu.Item>
+							{column.isSortable === true && (
+								<Menu.Item
+									as={Button}
+									variant="link"
+									action={() =>
+										sortState.action(SortDirectionEnum.Asc, column.accessorKey)
+									}
+								>
+									<IconArrowUp stroke={2} size={18} />
+									Sort Ascending
+								</Menu.Item>
+							)}
+							{column.isSortable === true && (
+								<Menu.Item
+									as={Button}
+									variant="link"
+									action={() =>
+										sortState.action(SortDirectionEnum.Desc, column.accessorKey)
+									}
+								>
+									<IconArrowDown stroke={2} size={18} />
+									Sort Descending
+								</Menu.Item>
+							)}
+							{column.isHidable === true && (
+								<Menu.Item
+									as={Button}
+									variant="link"
+									withSeparator
+									action={() =>
+										hideColumnState.action([column.accessorKey], false)
+									}
+									style={{ color: "var(--color-red_500)" }}
+								>
+									<IconEyeOff stroke={2} size={18} />
+									Hide Column
+								</Menu.Item>
+							)}
 						</Menu.Content>
 					</Menu.Provider>
 				) : (

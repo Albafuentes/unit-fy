@@ -65,6 +65,9 @@ export const buildColumns = <T extends object>(
 					...(columnConfig.divideY !== undefined
 						? { divideY: columnConfig.divideY }
 						: {}),
+					...(columnConfig.isHidable !== undefined
+						? { isHidable: columnConfig.isHidable }
+						: {}),
 					...(renderFunction !== undefined ? { render: renderFunction } : {}),
 				};
 

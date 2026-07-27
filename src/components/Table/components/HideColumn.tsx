@@ -17,13 +17,15 @@ const HideColumns = <T extends object>({
 	config,
 	parseColumns,
 }: HideColumnProps<T>): React.JSX.Element => {
-	const accessorKeys = config?.map((column) => column.accessorKey);
+	const accessorKeys: (keyof T)[] = config
+		?.map((column) => (column.isHidable === true ? column.accessorKey : "")) 
+		.filter((accessorKey) => accessorKey !== "") as (keyof T)[];
 
 	return (
 		<Menu.Provider>
 			<Menu.Trigger>
 				<IconColumns3 stroke={2} size={18} />
-                Column Visibility
+				Column Visibility
 			</Menu.Trigger>
 			<Menu.Content size="sm">
 				{!accessorKeys || accessorKeys.length === 0 ? (
