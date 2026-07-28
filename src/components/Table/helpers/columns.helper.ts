@@ -1,6 +1,6 @@
 import type React from "react";
 import type { TableTypes } from "../types/table.types";
-import { formatDataToCellType } from "./format.helper";
+import { renderCellByType } from "./format.helper";
 
 export const buildColumns = <T extends object>(
 	data: T[],
@@ -28,22 +28,6 @@ export const buildColumns = <T extends object>(
 		const configColumns: TableTypes.Column<T>[] = config
 			.filter((columnConfig) => columnConfig.isVisible !== false)
 			.map((columnConfig) => {
-				// Determine render function: use explicit render if provided, otherwise use renderType
-				let renderFunction:
-					| ((
-							cellData: T[keyof T],
-							colIndex: number,
-							rowData: T,
-					  ) => React.JSX.Element)
-					| undefined;
-
-				if (columnConfig.cell) {
-					// Explicit render function takes precedence
-					renderFunction = columnConfig.cell;
-				} else if (columnConfig.renderType) {
-					// Use renderer based on renderType
-					renderFunction = formatDataToCellType(columnConfig.renderType);
-				}
 				const column: TableTypes.Column<T> = {
 					header: columnConfig.header ?? (columnConfig.accessorKey as string),
 					accessorKey: columnConfig.accessorKey,
@@ -68,7 +52,9 @@ export const buildColumns = <T extends object>(
 					...(columnConfig.isHidable !== undefined
 						? { isHidable: columnConfig.isHidable }
 						: {}),
-					...(renderFunction !== undefined ? { render: renderFunction } : {}),
+					...(columnConfig.cell !== undefined
+						? { cell: columnConfig.cell }
+						: {}),
 				};
 
 				return column;

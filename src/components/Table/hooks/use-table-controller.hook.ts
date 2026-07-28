@@ -116,7 +116,7 @@ export const useTableController = <T extends object>(
 		return paginatedData(sortedResult, currentPage, pageSize);
 	}, [sortedResult, hasPagination, currentPage, pageSize]);
 
-	const parseColumns = useMemo(
+	const parsedColumns = useMemo(
 		() => buildColumns<T>(dataTable, tableConfig),
 		[dataTable, tableConfig],
 	);
@@ -218,7 +218,7 @@ export const useTableController = <T extends object>(
 
 	return {
 		dataTable,
-		parseColumns,
+		parsedColumns,
 		sortState: {
 			keyAccessor: sort.keyAccessor,
 			direction: sort.direction,

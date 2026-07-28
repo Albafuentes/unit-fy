@@ -49,7 +49,7 @@ const TableProvider = <T extends Record<string, unknown>>({
 
 	const {
 		dataTable,
-		parseColumns,
+		parsedColumns,
 		sortState,
 		paginationState,
 		filtersState,
@@ -73,7 +73,7 @@ const TableProvider = <T extends Record<string, unknown>>({
 						React.createElement<HideColumnProps<T>>(HideColumns, {
 							hideColumnState,
 							config,
-							parseColumns,
+							parsedColumns,
 						})}
 					{FilterComponent &&
 						React.cloneElement<FilterProps<T>>(FilterComponent, {
@@ -87,11 +87,11 @@ const TableProvider = <T extends Record<string, unknown>>({
 				React.cloneElement<TableContentProps<T>>(TableComponent, {
 					...TableComponent.props,
 					dataTable,
-					parseColumns,
-					config,
+					parsedColumns,
 					sortState,
 					hideColumnState,
 					selectColumnState,
+					hasActionColumn,
 					onRowClick,
 					rowIsDisabled,
 					rowStyle,

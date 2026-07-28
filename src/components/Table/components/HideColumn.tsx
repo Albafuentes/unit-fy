@@ -9,16 +9,16 @@ import type { TableTypes } from "../types/table.types";
 export interface HideColumnProps<T extends object> {
 	hideColumnState: HideColumnState<T>;
 	config: TableTypes.Column<T>[] | undefined;
-	parseColumns: TableTypes.Column<T>[];
+	parsedColumns: TableTypes.Column<T>[];
 }
 
 const HideColumns = <T extends object>({
 	hideColumnState,
 	config,
-	parseColumns,
+	parsedColumns,
 }: HideColumnProps<T>): React.JSX.Element => {
 	const accessorKeys: (keyof T)[] = config
-		?.map((column) => (column.isHidable === true ? column.accessorKey : "")) 
+		?.map((column) => (column.isHidable === true ? column.accessorKey : ""))
 		.filter((accessorKey) => accessorKey !== "") as (keyof T)[];
 
 	return (
@@ -32,7 +32,7 @@ const HideColumns = <T extends object>({
 					<Menu.Item>No Columns</Menu.Item>
 				) : (
 					accessorKeys.map((accessorKey) => {
-						const hasColumn = parseColumns.find(
+						const hasColumn = parsedColumns.find(
 							(column) => column.accessorKey === accessorKey,
 						);
 
@@ -43,10 +43,10 @@ const HideColumns = <T extends object>({
 								type="checkbox"
 								value={accessorKey.toString()}
 								checked={hasColumn !== undefined}
-								onClick={() =>
+								onChange={() =>
 									hideColumnState.action([accessorKey], !hasColumn)
 								}
-								action={() => hideColumnState.action([accessorKey], !hasColumn)}
+								aria-label={`Toggle visibility for ${accessorKey.toString()}`}
 							>
 								{`Show ${accessorKey.toString()}`}
 							</Menu.Item>

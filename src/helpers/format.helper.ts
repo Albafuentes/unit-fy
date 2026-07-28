@@ -1,7 +1,45 @@
+import { currencies } from "@/assets/currency";
+
 export const FALLBACK = "-";
+export const COUNTRY_FALLBACK = "US";
+export const CURRENCY_FALLBACK = "USD";
+
+export const getLocale = (): string => {
+	return navigator.language;
+};
+
+export const getTimeZone = (): string => {
+	return Intl.DateTimeFormat().resolvedOptions().timeZone;
+};
+
+export const getCountryCode = (): string => {
+	const locale = getLocale();
+	return (
+		new Intl.Locale(locale).region ??
+		locale.split("-")[0] ??
+		COUNTRY_FALLBACK
+	).toLowerCase();
+};
+
+export const getCurrency = (): string => {
+	return currencies[getCountryCode()].currency ?? CURRENCY_FALLBACK;
+};
+
+//more info in :https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DisplayNames/of
+export const getIntlNames = (
+	type: "region" | "currency" | "language",
+	code: string,
+): string => {
+	try {
+		const intlNames = new Intl.DisplayNames([getLocale()], { type });
+		return intlNames.of(code) ?? FALLBACK;
+	} catch {
+		return FALLBACK;
+	}
+};
 
 export const isValidNumber = (value: unknown): boolean => {
-    return typeof value === "number" && Number.isFinite(value) && value >= 0;
+	return typeof value === "number" && Number.isFinite(value) && value >= 0;
 };
 
 const isoDateOnly = /^\d{4}-\d{2}-\d{2}$/;
@@ -46,7 +84,10 @@ export const formatDate = (
 	}
 };
 
-export const formatByte = (byte: number | string | null, locale: string): string => {
+export const formatByte = (
+	byte: number | string | null,
+	locale: string,
+): string => {
 	if (!byte || !isValidNumber(Number(byte))) return FALLBACK;
 
 	try {
@@ -59,7 +100,10 @@ export const formatByte = (byte: number | string | null, locale: string): string
 	}
 };
 
-export const formatNumber = (number: number | string | null, locale: string): string => {
+export const formatNumber = (
+	number: number | string | null,
+	locale: string,
+): string => {
 	if (!number || !isValidNumber(Number(number))) return FALLBACK;
 
 	try {
@@ -69,21 +113,33 @@ export const formatNumber = (number: number | string | null, locale: string): st
 	}
 };
 
-export const formatNumberPercent = (number: number | string | null, locale: string): string => {
+export const formatNumberPercent = (
+	number: number | string | null,
+	locale: string,
+): string => {
 	if (!number || !isValidNumber(Number(number))) return FALLBACK;
 
 	try {
-		return new Intl.NumberFormat(locale, { style: "percent" }).format(Number(number));
+		return new Intl.NumberFormat(locale, { style: "percent" }).format(
+			Number(number),
+		);
 	} catch {
 		return FALLBACK;
 	}
 };
 
-export const formatNumberCurrency = (number: number | string | null, locale: string, currency: string): string => {
+export const formatNumberCurrency = (
+	number: number | string | null,
+	locale: string,
+	currency: string,
+): string => {
 	if (!number || !isValidNumber(Number(number))) return FALLBACK;
 
 	try {
-		return new Intl.NumberFormat(locale, { style: "currency", currency }).format(Number(number));
+		return new Intl.NumberFormat(locale, {
+			style: "currency",
+			currency,
+		}).format(Number(number));
 	} catch {
 		return FALLBACK;
 	}

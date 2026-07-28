@@ -8,7 +8,7 @@ import React, { useCallback, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { Button } from "../../Button/Button";
 import Menu from "../..//Menu";
-import { formatCellToString } from "../helpers";
+import { formatCellToString, renderCellByType } from "../helpers";
 import type {
 	HideColumnState,
 	SelectColumnState,
@@ -18,12 +18,12 @@ import { SortDirectionEnum, type TableTypes } from "../types/table.types";
 import EmptyState from "./EmptyState";
 
 export interface TableContentProps<T extends object> {
-	parseColumns: TableTypes.Column<T>[];
+	parsedColumns: TableTypes.Column<T>[];
 	sortState: SortState<T>;
-	config?: TableTypes.Column<T>[] | undefined;
 	dataTable: T[];
 	hideColumnState: HideColumnState<T>;
 	selectColumnState: SelectColumnState<T>;
+	hasActionColumn: boolean;
 	onRowClick?: (_data: T, _rowIndex: number) => void;
 	rowIsDisabled?: (_data: T, _rowIndex: number) => boolean;
 	rowStyle?: (
@@ -34,28 +34,24 @@ export interface TableContentProps<T extends object> {
 
 const TableContent = <T extends Record<string, any>>({
 	dataTable,
-	parseColumns,
-	config,
+	parsedColumns,
 	sortState,
 	hideColumnState,
 	selectColumnState,
 	onRowClick,
 	rowIsDisabled,
 	rowStyle,
+	hasActionColumn,
 }: TableContentProps<T>): React.JSX.Element => {
-	const hasActionColumn = useMemo(() => {
-		return config?.some((column) => column.isHidable) ?? false;
-	}, [config]);
-
-	const allRowIds = dataTable?.map((row) => row.id);
-	const allRowIdsAreChecked = allRowIds.every((id) =>
-		selectColumnState.selectedRows.includes(id),
+	const allRowIds = dataTable?.map((row) => row.internalId) as string[];
+	const allRowIdsAreChecked = allRowIds.every((internalId) =>
+		selectColumnState.selectedRows.includes(internalId),
 	);
 
-	const id = uuidv4();
+	const id = useMemo(() => uuidv4(), []);
 
 	const headerColumns = useMemo(() => {
-		return parseColumns.map((column: TableTypes.Column<T>) => {
+		return parsedColumns.map((column: TableTypes.Column<T>) => {
 			return React.createElement(
 				"th",
 				{
@@ -73,7 +69,11 @@ const TableContent = <T extends Record<string, any>>({
 					<Menu.Provider>
 						<Menu.Trigger variant="link" className="th-sortable_trigger">
 							{column.header}
-							<IconSelector stroke={2} size={18} />
+							<IconSelector
+								stroke={2}
+								size={18}
+								aria-label={`Column ${String(column.accessorKey)} actions ${column.isSortable ? "sortable" : ""} ${column.isSortable && column.isHidable ? "and" : ""} ${column.isHidable ? "hidable" : ""}`}
+							/>
 						</Menu.Trigger>
 						<Menu.Content size="sm">
 							{column.isSortable === true && (
@@ -121,7 +121,7 @@ const TableContent = <T extends Record<string, any>>({
 				),
 			);
 		});
-	}, [parseColumns, sortState, hideColumnState, id]);
+	}, [parsedColumns, sortState, hideColumnState, id]);
 
 	const headerRows = useMemo(() => {
 		return React.createElement(
@@ -140,12 +140,12 @@ const TableContent = <T extends Record<string, any>>({
 						<input
 							type="checkbox"
 							checked={allRowIdsAreChecked}
-							onClick={() =>
+							onChange={() =>
 								allRowIdsAreChecked
 									? selectColumnState.reset()
 									: selectColumnState.action(allRowIds)
 							}
-							onChange={() => {}}
+							aria-label="Select or unselect all rows"
 						/>,
 					)
 				: null,
@@ -162,16 +162,15 @@ const TableContent = <T extends Record<string, any>>({
 
 	const bodyColumns = useCallback(
 		(rowIndex: number) => {
-			const rowData = dataTable[rowIndex];
-			const rowRecord = rowData as Record<string, unknown> | undefined;
+			const row: T = dataTable[rowIndex];
 
-			return parseColumns.map(
+			return parsedColumns.map(
 				(column: TableTypes.Column<T>, colIndex: number) =>
 					React.createElement(
 						"td",
 						{
-							key: `table-body-cell-${rowData.internalId}-${String(column.accessorKey)}`,
-							id: `table-body-cell-${rowData.internalId}-${String(column.accessorKey)}`,
+							key: `table-body-cell-${row.internalId}-${String(column.accessorKey)}`,
+							id: `table-body-cell-${row.internalId}-${String(column.accessorKey)}`,
 							colSpan: column.colSpan || undefined,
 							...(column.minWidth || column.maxWidth || column.align
 								? {
@@ -184,15 +183,22 @@ const TableContent = <T extends Record<string, any>>({
 								: {}),
 						},
 						(() => {
-							const cellValue = rowRecord?.[String(column.accessorKey)];
+							const cellValue: T[keyof T] = row?.[String(column.accessorKey)];
 							return column.cell
-								? column.cell(cellValue as T[keyof T], colIndex, rowData)
-								: formatCellToString(cellValue);
+								? column.cell(cellValue, colIndex, row)
+								: column.renderType
+									? renderCellByType(
+											column.renderType,
+											cellValue,
+											colIndex,
+											row,
+										)
+									: formatCellToString(cellValue);
 						})(),
 					),
 			);
 		},
-		[parseColumns, dataTable],
+		[parsedColumns, dataTable],
 	);
 
 	// Create body rows with memoized callback
@@ -234,8 +240,8 @@ const TableContent = <T extends Record<string, any>>({
 							<input
 								type="checkbox"
 								checked={isSelected}
-								onClick={() => selectColumnState.action([rowData.internalId])}
-								onChange={() => {}}
+								onChange={() => selectColumnState.action([rowData.internalId])}
+								aria-label={`Select or unselect row ${rowIndex + 1}`}
 							/>,
 						)
 					: null,
@@ -257,7 +263,7 @@ const TableContent = <T extends Record<string, any>>({
 		<table className="table" data-testid="table">
 			<thead>{headerRows}</thead>
 			{dataTable.length === 0 ? (
-				<EmptyState colSpan={parseColumns.length} />
+				<EmptyState colSpan={parsedColumns.length} />
 			) : (
 				<tbody>{bodyRows}</tbody>
 			)}
