@@ -2,13 +2,13 @@ import type React from "react";
 import { Button, type ButtonProps } from "../../Button/Button";
 
 export type MenuItemProps<T extends React.ElementType = "p"> = {
-    as?: T;
-    children?: React.ReactNode;
-    action?: () => void;
-    withSeparator?: boolean;
+	as?: T;
+	children?: React.ReactNode;
+	action?: () => void;
+	withSeparator?: boolean;
 } & (T extends typeof Button
-    ? Omit<ButtonProps, "as" | "children" | "action" | "onClick">
-    : Omit<React.ComponentPropsWithoutRef<T>, "as" | "children" | "action">);
+	? Omit<ButtonProps, "as" | "children" | "action" | "onClick">
+	: Omit<React.ComponentPropsWithoutRef<T>, "as" | "children" | "action">);
 
 export const DEFAULT_ELEMENT = "p";
 
@@ -19,15 +19,10 @@ const MenuItem = <T extends React.ElementType = "p">(
 	const Component = as ?? "p";
 
 	if (Component === Button) {
-		    const buttonProps = rest as Omit<ButtonProps, "children" | "onClick">;
+		const buttonProps = rest as Omit<ButtonProps, "children" | "onClick">;
 		return (
-			<li
-				className={`${withSeparator ? "menu-item--with-separator" : ""}`}
-			>
-				<Button
-					{...buttonProps}
-					onClick={action ? () => action() : undefined}
-				>
+			<li className={`${withSeparator ? "menu-item--with-separator" : ""}`}>
+				<Button {...buttonProps} onClick={action ? () => action() : undefined}>
 					{children}
 				</Button>
 			</li>
@@ -35,27 +30,38 @@ const MenuItem = <T extends React.ElementType = "p">(
 	}
 
 	if (Component === "input") {
+		const {onBlur, onChange, ...inputProps} = rest as React.ComponentProps<"input">;
+		const isCheckbox = inputProps.type === "checkbox";
+		const isRadio = inputProps.type === "radio";
+
 		return (
-			<li
-				className={`${withSeparator ? "menu-item--with-separator" : ""}`}
-			>
+			<li className={`${withSeparator ? "menu-item--with-separator" : ""}`}>
 				<label>
-				<input
-					{...(rest as React.ComponentProps<"input">)}
-					onChange={() => {}}
-					onBlur={action ? () => action() : undefined}
-				/>
-				{children ?? ""}
+					<input
+						{...inputProps}
+						onChange={(event) => {
+							if (isCheckbox || isRadio) {
+								action ? action() : onChange?.(event);
+							}
+						}}
+						onBlur={(event) => {
+							if (!isCheckbox && !isRadio) {
+								action ? action() : onBlur?.(event);
+							}
+						}}
+					/>
+					{children ?? ""}
 				</label>
 			</li>
 		);
 	}
 
 	return (
-		<li
-			className={`${withSeparator ? "menu-item--with-separator" : ""}`}
-		>
-			<Component {...(rest as any)} onClick={action ? () => action() : undefined}>
+		<li className={`${withSeparator ? "menu-item--with-separator" : ""}`}>
+			<Component
+				{...(rest as any)}
+				onClick={action ? () => action() : undefined}
+			>
 				{children}
 			</Component>
 		</li>

@@ -1,6 +1,5 @@
-import { IconColumns3, IconDotsVertical } from "@tabler/icons-react";
+import { IconColumns3 } from "@tabler/icons-react";
 import type React from "react";
-import { v4 as uuidv4 } from "uuid";
 
 import Menu from "../../Menu";
 import type { HideColumnState } from "../hooks";
@@ -43,8 +42,8 @@ const HideColumns = <T extends object>({
 								type="checkbox"
 								value={accessorKey.toString()}
 								checked={hasColumn !== undefined}
-								onChange={() =>
-									hideColumnState.action([accessorKey], !hasColumn)
+								action={() =>
+									hideColumnState.action?.([accessorKey], !hasColumn)
 								}
 								aria-label={`Toggle visibility for ${accessorKey.toString()}`}
 							>
