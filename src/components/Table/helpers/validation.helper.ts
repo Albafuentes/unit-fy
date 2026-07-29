@@ -14,4 +14,3 @@ export const validationValue = <T extends object>(
 	}
 	return value;
 };
-

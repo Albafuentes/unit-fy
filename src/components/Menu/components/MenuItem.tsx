@@ -30,7 +30,8 @@ const MenuItem = <T extends React.ElementType = "p">(
 	}
 
 	if (Component === "input") {
-		const {onBlur, onChange, ...inputProps} = rest as React.ComponentProps<"input">;
+		const { onBlur, onChange, ...inputProps } =
+			rest as React.ComponentProps<"input">;
 		const isCheckbox = inputProps.type === "checkbox";
 		const isRadio = inputProps.type === "radio";
 
@@ -59,7 +60,7 @@ const MenuItem = <T extends React.ElementType = "p">(
 	return (
 		<li className={`${withSeparator ? "menu-item--with-separator" : ""}`}>
 			<Component
-				{...(rest as any)}
+				{...(rest as React.ComponentProps<"p" | T>)}
 				onClick={action ? () => action() : undefined}
 			>
 				{children}

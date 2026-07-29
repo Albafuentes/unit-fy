@@ -6,7 +6,7 @@ describe("EmptyState-component", () => {
 	afterEach(() => {
 		cleanup();
 	});
-	
+
 	test("should render correctly when compiles", async () => {
 		const { getByText } = await render(<EmptyState colSpan={3} />);
 

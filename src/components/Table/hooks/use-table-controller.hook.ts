@@ -52,7 +52,7 @@ export const useTableController = <T extends object>(
 		() =>
 			data.map((row) => ({
 				...row,
-				internalId: "internalId" in row ? row.internalId : uuidv4(),
+				internalId: "internalId" in row ? (row.internalId as string) : uuidv4(),
 			})),
 		[data],
 	);

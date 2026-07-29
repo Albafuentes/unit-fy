@@ -1,4 +1,5 @@
-import { act, cleanup, getByLabelText, render, waitFor } from "@testing-library/react";
+/** biome-ignore-all lint/suspicious/noExplicitAny: The use of 'any' is intentional for testing purposes */
+import { act, cleanup, render, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import type { HideColumnState } from "../hooks";
 import HideColumns from "./HideColumn";

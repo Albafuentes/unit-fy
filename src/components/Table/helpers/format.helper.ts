@@ -8,10 +8,12 @@ import {
 	formatNumberCurrency,
 	formatNumberPercent,
 	formatSentenceString,
+} from "../../../helpers/format.helper.js";
+import {
 	getCurrency,
 	getLocale,
 	getTimeZone,
-} from "../../../helpers/format.helper.js";
+} from "../../../helpers/internalization.helper.js";
 import type { TableTypes } from "../types/table.types.js";
 import { validationValue } from "./validation.helper.js";
 

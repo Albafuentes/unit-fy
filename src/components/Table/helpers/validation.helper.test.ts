@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: The use of 'any' is intentional for testing purposes */
 import { describe, expect, test } from "vitest";
 import { validationValue } from "./validation.helper";
 

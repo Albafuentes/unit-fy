@@ -1,77 +1,11 @@
-import { currencies } from "@/assets/currency";
+import {
+	isAValidDate,
+	isValidBoolean,
+	isValidNumber,
+	isValidString,
+} from "./validation.helper";
 
 export const FALLBACK = "-";
-
-/*
- * Internationalization functions
- */
-export const COUNTRY_FALLBACK = "US";
-export const CURRENCY_FALLBACK = "USD";
-
-export const getLocale = (): string => {
-	return navigator.language;
-};
-
-export const getTimeZone = (): string => {
-	return Intl.DateTimeFormat().resolvedOptions().timeZone;
-};
-
-export const getCountryCode = (): string => {
-	const locale = getLocale();
-	return (
-		new Intl.Locale(locale).region ??
-		locale.split("-")[0] ??
-		COUNTRY_FALLBACK
-	).toLowerCase();
-};
-
-export const getCurrency = (): string => {
-	return currencies[getCountryCode()].alphabeticCode ?? CURRENCY_FALLBACK;
-};
-
-//more info in :https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DisplayNames/of
-export const getIntlNames = (
-	type: "region" | "currency" | "language",
-	code: string,
-): string => {
-	try {
-		const intlNames = new Intl.DisplayNames([getLocale()], { type });
-		return intlNames.of(code) ?? FALLBACK;
-	} catch {
-		return FALLBACK;
-	}
-};
-
-/*
- * Validation functions
- */
-const isoDateOnly = /^\d{4}-\d{2}-\d{2}$/;
-const isoDateTime =
-	/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?(Z|[+-]\d{2}:\d{2})$/;
-
-export const isAValidDate = (date: string): boolean => {
-	const trimmed = date.trim();
-	if (!trimmed) return false;
-
-	if (!isoDateTime.test(trimmed) && !isoDateOnly.test(trimmed)) {
-		return false;
-	}
-
-	const parsed = new Date(trimmed);
-	return !Number.isNaN(parsed.getTime());
-};
-
-export const isValidNumber = (value: unknown): boolean => {
-	return typeof value === "number" && Number.isFinite(value) && value >= 0;
-};
-
-export const isValidString = (value: unknown): boolean => {
-	return typeof value === "string" && value.trim().length > 0;
-};
-
-export const isValidBoolean = (value: unknown): boolean => {
-	return typeof value === "boolean";
-};
 
 /*
  * Format functions

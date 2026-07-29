@@ -40,6 +40,5 @@ export namespace TableTypes {
 		//functionality
 		isSortable?: boolean; // Whether the column is sortable (optional)
 		isHidable?: boolean; // Whether the column can be hidden (optional)
-
 	};
 }

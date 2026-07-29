@@ -21,7 +21,7 @@ import EmptyState from "./EmptyState";
 export interface TableContentProps<T extends object> {
 	parsedColumns: TableTypes.Column<T>[];
 	sortState: SortState<T>;
-	dataTable: T[];
+	dataTable: (T & { internalId: string })[];
 	hideColumnState: HideColumnState<T>;
 	selectColumnState: SelectColumnState<T>;
 	hasActionColumn: boolean;
@@ -33,7 +33,7 @@ export interface TableContentProps<T extends object> {
 	) => React.HTMLAttributes<HTMLTableRowElement>["style"];
 }
 
-const TableContent = <T extends Record<string, any>>({
+const TableContent = <T extends Record<string, unknown>>({
 	dataTable,
 	parsedColumns,
 	sortState,
@@ -44,7 +44,7 @@ const TableContent = <T extends Record<string, any>>({
 	rowStyle,
 	hasActionColumn,
 }: TableContentProps<T>): React.JSX.Element => {
-	const allRowIds = dataTable?.map((row) => row.internalId) as string[];
+	const allRowIds = dataTable?.map((row) => row.internalId);
 	const allRowIdsAreChecked = allRowIds.every((internalId) =>
 		selectColumnState.selectedRows.includes(internalId),
 	);
@@ -164,7 +164,7 @@ const TableContent = <T extends Record<string, any>>({
 
 	const bodyColumns = useCallback(
 		(rowIndex: number) => {
-			const row: T = dataTable[rowIndex];
+			const row: T & { internalId: string } = dataTable[rowIndex];
 
 			return parsedColumns.map(
 				(column: TableTypes.Column<T>, colIndex: number) =>
@@ -185,7 +185,7 @@ const TableContent = <T extends Record<string, any>>({
 								: {}),
 						},
 						(() => {
-							const cellValue: T[keyof T] = row?.[String(column.accessorKey)];
+							const cellValue: T[keyof T] = row[column.accessorKey];
 							return column.cell
 								? column.cell(cellValue, colIndex, row)
 								: column.renderType
@@ -205,54 +205,58 @@ const TableContent = <T extends Record<string, any>>({
 
 	// Create body rows with memoized callback
 	const bodyRows = useMemo(() => {
-		return dataTable.map((rowData: T, rowIndex: number) => {
-			const isDisabled = rowIsDisabled
-				? rowIsDisabled(rowData, rowIndex)
-				: false;
-			const haveOnclick = Boolean(onRowClick) && !isDisabled;
+		return dataTable.map(
+			(rowData: T & { internalId: string }, rowIndex: number) => {
+				const isDisabled = rowIsDisabled
+					? rowIsDisabled(rowData, rowIndex)
+					: false;
+				const haveOnclick = Boolean(onRowClick) && !isDisabled;
 
-			const isSelected = selectColumnState.selectedRows.includes(
-				rowData.internalId,
-			);
+				const isSelected = selectColumnState.selectedRows.includes(
+					rowData.internalId,
+				);
 
-			return React.createElement(
-				"tr",
-				{
-					key: `table-body-row-${rowData.internalId}`,
-					id: `table-body-row-${rowData.internalId}`,
-					onClick: () => {
-						if (haveOnclick && onRowClick && !isDisabled) {
-							onRowClick(rowData, rowIndex);
-						}
+				return React.createElement(
+					"tr",
+					{
+						key: `table-body-row-${rowData.internalId}`,
+						id: `table-body-row-${rowData.internalId}`,
+						onClick: () => {
+							if (haveOnclick && onRowClick && !isDisabled) {
+								onRowClick(rowData, rowIndex);
+							}
+						},
+						"aria-disabled": isDisabled,
+						className: isSelected
+							? "tr-selected"
+							: isDisabled
+								? "tr-disabled"
+								: haveOnclick
+									? "tr-clickeable"
+									: "",
+
+						...(rowStyle ? { style: { ...rowStyle(rowData, rowIndex) } } : {}),
 					},
-					"aria-disabled": isDisabled,
-					className: isSelected
-						? "tr-selected"
-						: isDisabled
-							? "tr-disabled"
-							: haveOnclick
-								? "tr-clickeable"
-								: "",
-		
-					...(rowStyle ? { style: { ...rowStyle(rowData, rowIndex) } } : {}),
-				},
 
-				hasActionColumn
-					? React.createElement(
-							"td",
-							{ id: `table-body-action-cell-${rowData.internalId}` },
-							<input
-								type="checkbox"
-								checked={isSelected}
-								onChange={() => selectColumnState.action([rowData.internalId])}
-								aria-label={`Select or unselect row ${rowIndex + 1}`}
-							/>,
-						)
-					: null,
+					hasActionColumn
+						? React.createElement(
+								"td",
+								{ id: `table-body-action-cell-${rowData.internalId}` },
+								<input
+									type="checkbox"
+									checked={isSelected}
+									onChange={() =>
+										selectColumnState.action([rowData.internalId])
+									}
+									aria-label={`Select or unselect row ${rowIndex + 1}`}
+								/>,
+							)
+						: null,
 
-				bodyColumns(rowIndex),
-			);
-		});
+					bodyColumns(rowIndex),
+				);
+			},
+		);
 	}, [
 		dataTable,
 		rowIsDisabled,

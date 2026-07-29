@@ -1,1 +1,1 @@
-export * from './use-table-controller.hook';
+export * from "./use-table-controller.hook";

@@ -8,7 +8,7 @@ const Menu = {
 	Provider: MenuProvider,
 	Item: MenuItem,
 	Trigger: MenuTrigger,
-    Content: MenuContent,
+	Content: MenuContent,
 };
 
 // Adjuntar los sub-componentes

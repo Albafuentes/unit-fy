@@ -4,10 +4,10 @@ import TableProvider from "./TableProvider";
 
 // Crear el objeto Table con sus sub-componentes
 const Table = {
-    Provider: TableProvider,
-    Content: TableContent,
-    Filter: Filter,
-    Pagination: Pagination,
+	Provider: TableProvider,
+	Content: TableContent,
+	Filter: Filter,
+	Pagination: Pagination,
 };
 
 // Adjuntar los sub-componentes

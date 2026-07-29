@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: The use of 'any' is intentional for testing purposes */
 import { act, cleanup, render, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { SortDirectionEnum } from "../types/table.types";
@@ -6,7 +7,7 @@ import TableContent, { type TableContentProps } from "./TableContent";
 describe("TableContent-component", () => {
 	afterEach(() => {
 		cleanup();
-		 vi.clearAllMocks();
+		vi.clearAllMocks();
 	});
 
 	const sortAction = vi.fn();
@@ -127,7 +128,7 @@ describe("TableContent-component", () => {
 	});
 
 	test("should execute the rowIsDisabled function when a row is clicked", async () => {
-		const { getByRole} = await render(
+		const { getByRole } = await render(
 			<TableContent {...tableContentProps} rowIsDisabled={() => true} />,
 		);
 
@@ -166,7 +167,7 @@ describe("TableContent-component", () => {
 
 		const row = getByRole("row", { name: "Select or unselect row 1 John Doe" });
 
-		debug(row)
+		debug(row);
 
 		expect(row).toHaveAttribute("style", "background-color: red;");
 	});

@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noDescendingSpecificity: The descending specificity in this file is intentional for table styling */
 @import url("../../theme/index.css");
 
 #table-container {

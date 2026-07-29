@@ -5,7 +5,6 @@ import { v4 as uuidv4 } from "uuid";
 import { Button } from "../Button/Button";
 import Menu from "../Menu/index";
 import type { FilterProps, TableFilters } from "./components/Filter";
-import type { FiltersState } from "./hooks/use-table-controller.hook";
 import Table from "./index";
 import type { TableTypes } from "./types/table.types";
 
@@ -28,7 +27,7 @@ type DataType = {
 	colCustom: string;
 };
 
-const DATA: DataType[] = Array.from({ length: 80 }).map((_, index) => ({
+const DATA: DataType[] = Array.from({ length: 80 }).map((_, _index) => ({
 	rawString: uuidv4(),
 	rawNumber: Number((Math.random() * 100).toFixed(2)),
 	rawEmpty: "",

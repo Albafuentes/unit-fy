@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/correctness/useJsxKeyInIterable: the test.each not requiring keys */
+/** biome-ignore-all lint/suspicious/noExplicitAny: The use of 'any' is intentional for testing purposes */
 import { cleanup } from "@testing-library/react";
 import { afterEach, describe, expect, test } from "vitest";
 import { FALLBACK } from "@/helpers/format.helper";

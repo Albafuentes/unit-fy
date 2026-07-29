@@ -39,7 +39,9 @@
 .button--link {
 	background-color: transparent;
 	color: var(--color-gray_900);
+	/* biome-ignore lint/complexity/noImportantStyles: it is an intentional override to button styles */
 	padding-left: 0 !important;
+	/* biome-ignore lint/complexity/noImportantStyles: it is an intentional override to button styles */
 	padding-right: 0 !important;
 
 	&:hover {

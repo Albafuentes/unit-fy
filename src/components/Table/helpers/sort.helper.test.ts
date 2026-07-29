@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: The use of 'any' is intentional for testing purposes */
 import { cleanup } from "@testing-library/react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { SortDirectionEnum } from "../types/table.types";
@@ -100,25 +101,24 @@ describe("sort.helper", () => {
 		expect(result.map((item) => item[input.keyAccessor])).toEqual(output);
 	});
 
-
 	test("should not mutate the original array when sorting", () => {
 		const original = [...data];
 		sortedData(SortDirectionEnum.Asc, "id", data);
- 
+
 		expect(data).toEqual(original);
 	});
- 
+
 	test("should return the same data unsorted when no direction is passed", () => {
 		// @ts-expect-error probamos el guard con valor falsy
 		const result = sortedData(undefined, "id", data);
- 
+
 		expect(result).toBe(data);
 	});
- 
+
 	test("should return the same data unsorted when no keyAccessor is passed", () => {
 		// @ts-expect-error probamos el guard con valor falsy
 		const result = sortedData(SortDirectionEnum.Asc, undefined, data);
- 
+
 		expect(result).toBe(data);
 	});
 });

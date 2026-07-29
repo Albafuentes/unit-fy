@@ -1,19 +1,21 @@
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import { useMemo, useState } from "react";
-import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_SIZE_OPTIONS, DEFAULT_PAGE_SLICE_SIZE } from "../config";
+import {
+	DEFAULT_PAGE_SIZE,
+	DEFAULT_PAGE_SIZE_OPTIONS,
+	DEFAULT_PAGE_SLICE_SIZE,
+} from "../config";
 import type { PaginationState } from "../hooks/use-table-controller.hook";
 
-type PublicPaginationProps = Omit<
-	PaginationState,
-	"action" | "pageSizeAction"
->;
+type PublicPaginationProps = Omit<PaginationState, "action" | "pageSizeAction">;
 
 type PrivatePaginationProps = Pick<
 	PaginationState,
 	"currentPage" | "action" | "pageSizeAction"
 >;
 
-export type PaginationProps = PublicPaginationProps & Partial<PrivatePaginationProps>;
+export type PaginationProps = PublicPaginationProps &
+	Partial<PrivatePaginationProps>;
 
 const Pagination = ({
 	currentPage,
@@ -101,10 +103,7 @@ const Pagination = ({
 							setStart((prev) =>
 								Math.min(
 									prev + DEFAULT_PAGE_SIZE,
-									Math.max(
-										0,
-										totalPages - (pageSize ?? DEFAULT_PAGE_SIZE),
-									),
+									Math.max(0, totalPages - (pageSize ?? DEFAULT_PAGE_SIZE)),
 								),
 							)
 						}
