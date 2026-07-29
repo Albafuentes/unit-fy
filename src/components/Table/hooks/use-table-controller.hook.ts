@@ -199,16 +199,14 @@ export const useTableController = <T extends object>(
 			return;
 		}
 
-		const rowIsPreviouslySelected = rowIds.some((id) =>
-			selectedRows.includes(id),
-		);
-
 		setSelectedRows((prevSelectedRows) => {
-			const updatedSelectedRows = rowIsPreviouslySelected
-				? prevSelectedRows.filter((id) => !rowIds.includes(id))
-				: [...prevSelectedRows, ...rowIds];
+			const toRemove = rowIds.filter((id) => prevSelectedRows.includes(id));
+			const toAdd = rowIds.filter((id) => !prevSelectedRows.includes(id));
 
-			return Array.from(new Set(updatedSelectedRows));
+			return [
+				...prevSelectedRows.filter((id) => !toRemove.includes(id)),
+				...toAdd,
+			];
 		});
 	};
 
