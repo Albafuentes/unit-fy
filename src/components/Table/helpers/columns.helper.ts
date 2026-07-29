@@ -1,6 +1,4 @@
-import type React from "react";
 import type { TableTypes } from "../types/table.types";
-import { renderCellByType } from "./format.helper";
 
 export const buildColumns = <T extends object>(
 	data: T[],

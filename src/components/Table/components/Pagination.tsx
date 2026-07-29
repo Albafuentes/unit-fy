@@ -39,11 +39,11 @@ const Pagination = ({
 	return (
 		<div className="table-pagination">
 			<p>
-				Página {currentPage} de {totalPages}
+				Page {currentPage} of {totalPages}
 			</p>
 
 			<label htmlFor="page-size">
-				Filas por página
+				Rows per page
 				<select
 					id="page-size"
 					name="page-size"
@@ -67,7 +67,7 @@ const Pagination = ({
 						action?.(Math.max(1, (currentPage ?? 1) - 1), pageSize)
 					}
 					disabled={(currentPage ?? 1) <= 1}
-					aria-label="Página anterior"
+					aria-label="previous page"
 				>
 					<IconChevronLeft stroke={2} />
 				</button>
@@ -77,6 +77,7 @@ const Pagination = ({
 						onClick={() =>
 							setStart((prev) => Math.max(0, prev - DEFAULT_PAGE_SLICE_SIZE))
 						}
+						aria-label="previous page slice"
 					>
 						...
 					</button>
@@ -107,6 +108,7 @@ const Pagination = ({
 								),
 							)
 						}
+						aria-label="next page slice"
 					>
 						...
 					</button>
@@ -119,7 +121,7 @@ const Pagination = ({
 						action?.(Math.min(totalPages, (currentPage ?? 1) + 1), pageSize)
 					}
 					disabled={(currentPage ?? 1) >= totalPages}
-					aria-label="Página siguiente"
+					aria-label="next page"
 				>
 					<IconChevronRight stroke={2} />
 				</button>

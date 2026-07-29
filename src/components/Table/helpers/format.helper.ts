@@ -7,6 +7,7 @@ import {
 	formatNumber,
 	formatNumberCurrency,
 	formatNumberPercent,
+	formatSentenceString,
 	getCurrency,
 	getLocale,
 	getTimeZone,
@@ -110,12 +111,20 @@ export const renderCellByType = <T extends object>(
 			return createElement(
 				"span",
 				null,
-				formatNumberCurrency(validationValue<T>(cellData), getLocale(), getCurrency()),
+				formatNumberCurrency(
+					validationValue<T>(cellData),
+					getLocale(),
+					getCurrency(),
+				),
 			);
 		case "badge":
 			return createElement("span", null, String(cellData ?? ""));
 		default:
 			// Default: use renderText which handles both short and long text automatically
-			return createElement("span", null, String(cellData ?? ""));
+			return createElement(
+				"span",
+				null,
+				formatSentenceString(String(cellData ?? "")),
+			);
 	}
 };

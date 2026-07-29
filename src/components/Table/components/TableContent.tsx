@@ -6,6 +6,7 @@ import {
 } from "@tabler/icons-react";
 import React, { useCallback, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { formatSentenceString } from "@/helpers/format.helper";
 import { Button } from "../../Button/Button";
 import Menu from "../..//Menu";
 import { formatCellToString, renderCellByType } from "../helpers";
@@ -29,7 +30,7 @@ export interface TableContentProps<T extends object> {
 	rowStyle?: (
 		_data: T,
 		_rowIndex: number,
-	) => React.HTMLAttributes<HTMLTableRowElement>;
+	) => React.HTMLAttributes<HTMLTableRowElement>["style"];
 }
 
 const TableContent = <T extends Record<string, any>>({
@@ -67,13 +68,14 @@ const TableContent = <T extends Record<string, any>>({
 				},
 				column.isSortable || column.isHidable ? (
 					<Menu.Provider>
-						<Menu.Trigger variant="link" className="th-sortable_trigger">
-							{column.header}
-							<IconSelector
-								stroke={2}
-								size={18}
-								aria-label={`Column ${String(column.accessorKey)} actions ${column.isSortable ? "sortable" : ""} ${column.isSortable && column.isHidable ? "and" : ""} ${column.isHidable ? "hidable" : ""}`}
-							/>
+						<Menu.Trigger
+							variant="link"
+							className="th-sortable_trigger"
+							aria-label={`${String(column.accessorKey)} column ${String(column.accessorKey)} actions ${column.isSortable ? "sortable" : ""} ${column.isSortable && column.isHidable ? "and" : ""} ${column.isHidable ? "hidable" : ""}`}
+						>
+							{column.header ??
+								formatSentenceString(String(column.accessorKey))}
+							<IconSelector stroke={2} size={18} aria-hidden />
 						</Menu.Trigger>
 						<Menu.Content size="sm">
 							{column.isSortable === true && (
@@ -223,6 +225,7 @@ const TableContent = <T extends Record<string, any>>({
 							onRowClick(rowData, rowIndex);
 						}
 					},
+					"aria-disabled": isDisabled,
 					className: isSelected
 						? "tr-selected"
 						: isDisabled
@@ -230,7 +233,8 @@ const TableContent = <T extends Record<string, any>>({
 							: haveOnclick
 								? "tr-clickeable"
 								: "",
-					...(rowStyle ? rowStyle(rowData, rowIndex) : {}),
+		
+					...(rowStyle ? { style: { ...rowStyle(rowData, rowIndex) } } : {}),
 				},
 
 				hasActionColumn
