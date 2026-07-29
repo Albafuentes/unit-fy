@@ -6,7 +6,7 @@ import { FALLBACK } from "@/helpers/format.helper";
 import type { TableTypes } from "../types/table.types";
 import { formatCellToString, renderCellByType } from "./format.helper";
 
-describe("format-helper", () => {
+describe("format--helper", () => {
 	afterEach(() => {
 		cleanup();
 	});

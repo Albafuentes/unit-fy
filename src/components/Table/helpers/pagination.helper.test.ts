@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-describe("pagination.helper", () => {
+describe("pagination--helper", () => {
 	test("should return the correct number of pages based on total items and items per page", () => {
 		const data = [
 			{ name: "Item 1" },

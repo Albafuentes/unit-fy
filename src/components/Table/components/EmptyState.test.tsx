@@ -2,7 +2,7 @@ import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, test } from "vitest";
 import EmptyState from "./EmptyState";
 
-describe("EmptyState-component", () => {
+describe("EmptyState--component", () => {
 	afterEach(() => {
 		cleanup();
 	});

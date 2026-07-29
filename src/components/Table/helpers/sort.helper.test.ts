@@ -9,7 +9,7 @@ vi.mock("../../../helpers/format.helper", () => ({
 	isAValidDate: (value: string) => /^\d{4}-\d{2}-\d{2}/.test(value),
 }));
 
-describe("sort.helper", () => {
+describe("sort--helper", () => {
 	afterEach(() => {
 		cleanup();
 		vi.clearAllMocks();

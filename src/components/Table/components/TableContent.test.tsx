@@ -4,7 +4,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { SortDirectionEnum } from "../types/table.types";
 import TableContent, { type TableContentProps } from "./TableContent";
 
-describe("TableContent-component", () => {
+describe("TableContent--component", () => {
 	afterEach(() => {
 		cleanup();
 		vi.clearAllMocks();

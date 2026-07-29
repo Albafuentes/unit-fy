@@ -2,7 +2,7 @@ import { cleanup } from "@testing-library/react";
 import { afterEach, describe, expect, test } from "vitest";
 import { filteredData } from "./filter.helper";
 
-describe("filter-helper", () => {
+describe("filter--helper", () => {
 	afterEach(() => {
 		cleanup();
 	});

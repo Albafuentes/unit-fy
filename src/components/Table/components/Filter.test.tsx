@@ -4,7 +4,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import type { TableFilters } from "./Filter";
 import Filter from "./Filter";
 
-describe("Filter-component", () => {
+describe("Filter--component", () => {
 	afterEach(() => {
 		cleanup();
 	});

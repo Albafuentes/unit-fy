@@ -4,7 +4,7 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import type { HideColumnState } from "../hooks";
 import HideColumns from "./HideColumn";
 
-describe("HideColumn-component", () => {
+describe("HideColumn--component", () => {
 	afterEach(() => {
 		cleanup();
 	});

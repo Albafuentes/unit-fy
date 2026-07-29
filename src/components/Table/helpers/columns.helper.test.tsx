@@ -4,7 +4,7 @@ import { afterEach, describe, expect, test } from "vitest";
 import type { TableTypes } from "../types/table.types";
 import { buildColumns } from "./columns.helper";
 
-describe("columns-helper", () => {
+describe("columns--helper", () => {
 	afterEach(() => {
 		cleanup();
 	});

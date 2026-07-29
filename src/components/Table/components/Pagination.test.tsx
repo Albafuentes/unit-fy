@@ -2,7 +2,7 @@ import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import Pagination from "./Pagination";
 
-describe("Pagination-component", () => {
+describe("Pagination--component", () => {
 	afterEach(() => {
 		cleanup();
 	});
