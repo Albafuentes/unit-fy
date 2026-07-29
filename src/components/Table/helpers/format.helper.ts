@@ -91,9 +91,7 @@ export const renderCellByType = <T extends object>(
 			return createElement(
 				"span",
 				null,
-				typeof cellData === "boolean"
-					? formatBoolean(cellData)
-					: String(cellData),
+				formatBoolean(validationValue<T>(cellData)),
 			);
 		case "number":
 			return createElement(
@@ -118,13 +116,9 @@ export const renderCellByType = <T extends object>(
 				),
 			);
 		case "badge":
-			return createElement("span", null, String(cellData ?? ""));
+			return createElement("span", null, String(cellData ?? FALLBACK));
 		default:
-			// Default: use renderText which handles both short and long text automatically
-			return createElement(
-				"span",
-				null,
-				formatSentenceString(String(cellData ?? "")),
-			);
+			// Default: use formatSentenceString which handles both short and long text automatically
+			return createElement("span", null, formatSentenceString(cellData));
 	}
 };

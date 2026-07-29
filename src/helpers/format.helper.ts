@@ -26,7 +26,7 @@ export const getCountryCode = (): string => {
 };
 
 export const getCurrency = (): string => {
-	return currencies[getCountryCode()].currency ?? CURRENCY_FALLBACK;
+	return currencies[getCountryCode()].alphabeticCode ?? CURRENCY_FALLBACK;
 };
 
 //more info in :https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DisplayNames/of
@@ -77,7 +77,7 @@ export const isValidBoolean = (value: unknown): boolean => {
  * Format functions
  */
 export const formatDate = (
-	date: Date | string | null,
+	date: unknown | null,
 	locale: string,
 	timeZone: string,
 	withTime: boolean = false,
@@ -85,7 +85,7 @@ export const formatDate = (
 	if (!date || !isAValidDate(String(date))) return FALLBACK;
 
 	try {
-		return new Date(date).toLocaleDateString(locale, {
+		return new Date(String(date)).toLocaleDateString(locale, {
 			timeZone,
 			day: "2-digit",
 			month: "2-digit",
@@ -102,10 +102,7 @@ export const formatDate = (
 	}
 };
 
-export const formatByte = (
-	byte: number | string | null,
-	locale: string,
-): string => {
+export const formatByte = (byte: unknown | null, locale: string): string => {
 	if (!byte || !isValidNumber(Number(byte))) return FALLBACK;
 
 	try {
@@ -119,7 +116,7 @@ export const formatByte = (
 };
 
 export const formatNumber = (
-	number: number | string | null,
+	number: unknown | null,
 	locale: string,
 ): string => {
 	if (!number || !isValidNumber(Number(number))) return FALLBACK;
@@ -132,7 +129,7 @@ export const formatNumber = (
 };
 
 export const formatNumberPercent = (
-	number: number | string | null,
+	number: unknown | null,
 	locale: string,
 ): string => {
 	if (!number || !isValidNumber(Number(number))) return FALLBACK;
@@ -147,11 +144,11 @@ export const formatNumberPercent = (
 };
 
 export const formatNumberCurrency = (
-	number: number | string | null,
+	number: unknown | null,
 	locale: string,
 	currency: string,
 ): string => {
-	if (!number || !isValidNumber(Number(number))) return FALLBACK;
+	if (number === null || !isValidNumber(Number(number))) return FALLBACK;
 
 	try {
 		return new Intl.NumberFormat(locale, {
@@ -163,8 +160,8 @@ export const formatNumberCurrency = (
 	}
 };
 
-export const formatBoolean = (boolean: boolean | null): string => {
-	if (!boolean || !isValidBoolean(boolean)) return FALLBACK;
+export const formatBoolean = (boolean: unknown | null): string => {
+	if (!boolean || !isValidBoolean(boolean)) return String(boolean);
 
 	try {
 		return boolean ? "yes" : "no";
@@ -173,11 +170,10 @@ export const formatBoolean = (boolean: boolean | null): string => {
 	}
 };
 
-export const formatSentenceString = (str: string | null): string => {
+export const formatSentenceString = (str: unknown | null): string => {
 	if (!str || !isValidString(str)) return FALLBACK;
 
-	const words = str
-
+	const words = String(str)
 		.replace(/([a-z0-9])([A-Z])/g, "$1 $2") //camelCase/PascalCase
 		.replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2") // consecutive acronyms
 
