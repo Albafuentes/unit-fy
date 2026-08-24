@@ -52,4 +52,16 @@
 		0px 0px 1px color-mix(in srgb, var(--color-gray_900) 30%, transparent);
 	--shadow-inner: inset 0 2px 4px 0 color-mix(in srgb, black 5%, transparent);
 	--shadow-inset: inset 0 0 0 1px color-mix(in srgb, black 5%, transparent);
+
+	/* ----------------------------------------------------------- */
+	/* Spaces */
+	--space-0: 0;
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.25rem;
+	--space-6: 1.5rem;
+	--space-7: 1.75rem;
+	--space-8: 2rem;
 }

@@ -37,9 +37,8 @@ export namespace TableTypes {
 		align?: "left" | "center" | "right";
 		divideY?: boolean; // Whether to divide the column by the value of the cell (optional)
 		isVisible?: boolean; // Whether to hide this column (optional, defaults to false)
-
 		//functionality
 		isSortable?: boolean; // Whether the column is sortable (optional)
-
+		isHidable?: boolean; // Whether the column can be hidden (optional)
 	};
 }

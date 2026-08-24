@@ -4,7 +4,7 @@
 //TODO: Is a value helper
 export const validationValue = <T extends object>(
 	value: T[keyof T],
-): string | null => {
+): T[keyof T] | null => {
 	if (
 		value === null ||
 		value === undefined ||
@@ -12,6 +12,5 @@ export const validationValue = <T extends object>(
 	) {
 		return null;
 	}
-	return String(value);
+	return value;
 };
-

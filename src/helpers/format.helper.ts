@@ -1,27 +1,17 @@
+import {
+	isAValidDate,
+	isValidBoolean,
+	isValidNumber,
+	isValidString,
+} from "./validation.helper";
+
 export const FALLBACK = "-";
 
-export const isValidNumber = (value: unknown): boolean => {
-    return typeof value === "number" && Number.isFinite(value) && value >= 0;
-};
-
-const isoDateOnly = /^\d{4}-\d{2}-\d{2}$/;
-const isoDateTime =
-	/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?(Z|[+-]\d{2}:\d{2})$/;
-
-export const isAValidDate = (date: string): boolean => {
-	const trimmed = date.trim();
-	if (!trimmed) return false;
-
-	if (!isoDateTime.test(trimmed) && !isoDateOnly.test(trimmed)) {
-		return false;
-	}
-
-	const parsed = new Date(trimmed);
-	return !Number.isNaN(parsed.getTime());
-};
-
+/*
+ * Format functions
+ */
 export const formatDate = (
-	date: Date | string | null,
+	date: unknown | null,
 	locale: string,
 	timeZone: string,
 	withTime: boolean = false,
@@ -29,7 +19,7 @@ export const formatDate = (
 	if (!date || !isAValidDate(String(date))) return FALLBACK;
 
 	try {
-		return new Date(date).toLocaleDateString(locale, {
+		return new Date(String(date)).toLocaleDateString(locale, {
 			timeZone,
 			day: "2-digit",
 			month: "2-digit",
@@ -46,7 +36,7 @@ export const formatDate = (
 	}
 };
 
-export const formatByte = (byte: number | string | null, locale: string): string => {
+export const formatByte = (byte: unknown | null, locale: string): string => {
 	if (!byte || !isValidNumber(Number(byte))) return FALLBACK;
 
 	try {
@@ -59,7 +49,10 @@ export const formatByte = (byte: number | string | null, locale: string): string
 	}
 };
 
-export const formatNumber = (number: number | string | null, locale: string): string => {
+export const formatNumber = (
+	number: unknown | null,
+	locale: string,
+): string => {
 	if (!number || !isValidNumber(Number(number))) return FALLBACK;
 
 	try {
@@ -69,32 +62,66 @@ export const formatNumber = (number: number | string | null, locale: string): st
 	}
 };
 
-export const formatNumberPercent = (number: number | string | null, locale: string): string => {
+export const formatNumberPercent = (
+	number: unknown | null,
+	locale: string,
+): string => {
 	if (!number || !isValidNumber(Number(number))) return FALLBACK;
 
 	try {
-		return new Intl.NumberFormat(locale, { style: "percent" }).format(Number(number));
+		return new Intl.NumberFormat(locale, { style: "percent" }).format(
+			Number(number),
+		);
 	} catch {
 		return FALLBACK;
 	}
 };
 
-export const formatNumberCurrency = (number: number | string | null, locale: string, currency: string): string => {
-	if (!number || !isValidNumber(Number(number))) return FALLBACK;
+export const formatNumberCurrency = (
+	number: unknown | null,
+	locale: string,
+	currency: string,
+): string => {
+	if (number === null || !isValidNumber(Number(number))) return FALLBACK;
 
 	try {
-		return new Intl.NumberFormat(locale, { style: "currency", currency }).format(Number(number));
+		return new Intl.NumberFormat(locale, {
+			style: "currency",
+			currency,
+		}).format(Number(number));
 	} catch {
 		return FALLBACK;
 	}
 };
 
-export const formatBoolean = (boolean: boolean | null): string => {
-	if (!boolean) return FALLBACK;
+export const formatBoolean = (boolean: unknown | null): string => {
+	if (!boolean || !isValidBoolean(boolean)) return String(boolean);
 
 	try {
-		return boolean ? "Si" : "No";
+		return boolean ? "yes" : "no";
 	} catch {
 		return FALLBACK;
 	}
+};
+
+export const formatSentenceString = (str: unknown | null): string => {
+	if (!str || !isValidString(str)) return FALLBACK;
+
+	const words = String(str)
+		.replace(/([a-z0-9])([A-Z])/g, "$1 $2") //camelCase/PascalCase
+		.replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2") // consecutive acronyms
+
+		.replace(/[_\-.]+/g, " ") // replace _, -, ., espaces - snake_case, kebab-case, dot.case, etc.
+		.trim()
+		.split(/\s+/)
+		.filter(Boolean)
+		.map((w) => w.toLowerCase());
+
+	if (words.length === 0) return "";
+
+	return (
+		words[0][0].toUpperCase() +
+		words[0].slice(1) +
+		(words.length > 1 ? ` ${words.slice(1).join(" ")}` : "")
+	);
 };

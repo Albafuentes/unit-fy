@@ -1,5 +1,5 @@
-import { isAValidDate } from "@/helpers/format.helper";
-import { SortDirectionEnum, type TableTypes } from "../types/table.types";
+import { getLocale, isAValidDate } from "../../../helpers/format.helper";
+import { SortDirectionEnum } from "../types/table.types";
 
 const detectDataType = (value: unknown): "date" | "number" | "string" => {
 	if (value === null || value === undefined) return "string";
@@ -34,7 +34,7 @@ export const compareValues = <T>(
 	const typeA = detectDataType(a);
 	const typeB = detectDataType(b);
 
-	const locale = "es-ES";
+	const locale = getLocale();
 
 	const stringCollator = new Intl.Collator(locale, {
 		sensitivity: "base", // ignora acentos y mayúsculas

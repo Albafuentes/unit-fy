@@ -1,0 +1,119 @@
+.menu-container {
+	display: inline-block;
+
+	menu {
+		position: absolute;
+		margin: var(--space-2);
+
+		min-width: 10rem;
+		max-height: 20rem;
+		animation: fadeIn 0.2s ease-in-out;
+
+		outline: 0;
+		border: 1px solid var(--color-gray_200);
+		border-radius: var(--border-radius-md);
+
+		background-color: var(--color-white);
+		box-shadow: var(--shadow-md);
+
+		color: var(--color-gray_900);
+
+		overflow: hidden auto;
+		padding: var(--space-2) var(--space-4);
+		scroll-padding: var(--space-2);
+
+		&.menu-content--right-start {
+			top: anchor(top);
+			left: anchor(right);
+		}
+
+		&.menu-content--right-end {
+			top: anchor(bottom);
+			left: anchor(right);
+		}
+
+		&.menu-content--left-start {
+			top: anchor(top);
+			left: anchor(left);
+		}
+
+		&.menu-content--left-end {
+			top: anchor(bottom);
+			left: anchor(left);
+		}
+
+		&.menu-content--sm {
+			width: 12rem;
+		}
+		&.menu-content--md {
+			width: 16rem;
+		}
+		&.menu-content--lg {
+			width: 20rem;
+		}
+
+		li {
+			width: 100%;
+			display: flex;
+			align-items: center;
+			text-align: start;
+			gap: var(--space-2);
+
+			user-select: none;
+			cursor: default;
+
+			text-decoration: none;
+			font-size: var(--font-size-sm);
+			line-height: var(--line-height-sm);
+
+			& > * {
+				width: 100%;
+
+				text-align: start;
+
+				margin-block: var(--space-2);
+				margin-inline: 0;
+
+				border-radius: var(--border-radius-xs);
+
+				& > p:hover,
+				& > span:hover,
+				& > a:hover {
+					background-color: var(--color-gray_100);
+				}
+			}
+
+			& > *:not(button) {
+				display: flex;
+				width: 100%;
+				align-items: center;
+				justify-content: flex-start;
+				gap: var(--space-2);
+
+				text-align: start;
+
+				margin-block: var(--space-2);
+				margin-inline: 0;
+
+				padding-inline: var(--space-2);
+				padding-block: var(--space-1);
+
+				outline: 0;
+				border-radius: var(--border-radius-xs);
+
+				transition: background-color 0.2s ease-in-out;
+
+				& > p:hover,
+				& > span:hover,
+				& > a:hover {
+					background-color: var(--color-gray_100);
+				}
+			}
+
+			&.menu-item--with-separator {
+				border-top: 1px solid var(--color-gray_200);
+				margin-top: var(--space-2);
+			}
+		}
+	}
+}

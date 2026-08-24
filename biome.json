@@ -14,9 +14,9 @@
 			"!**/build",
 			"!**/*.tsbuildinfo",
 			"!**/.DS_Store",
-			"!**/.vitest/**",
-			"!**/coverage/**",
-			"!**/storybook-static/**"
+			"!**/.vitest",
+			"!**/coverage",
+			"!**/storybook-static"
 		]
 	},
 	"formatter": {
